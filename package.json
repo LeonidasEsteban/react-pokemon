@@ -18,6 +18,9 @@
     "require-globify": "^1.2.1",
     "babelify": "^6.1.2"
   },
+  "engines": {
+    "node": "0.12.2"
+  },
   "scripts": {
     "start": "node server.js",
     "browserify": "browserify -t babelify -t reactify -t require-globify public/index.js -o public/bundle.js",

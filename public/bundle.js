@@ -1,6 +1,94 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.1
+ * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -10,19 +98,19 @@
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-05-01T17:11Z
+ * Date: 2015-04-28T16:01Z
  */
 
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper window is present,
-		// execute the factory and get jQuery
-		// For environments that do not inherently posses a window with a document
-		// (such as Node.js), expose a jQuery-making factory as module.exports
-		// This accentuates the need for the creation of a real window
+		// For CommonJS and CommonJS-like environments where a proper `window`
+		// is present, execute the factory and get jQuery.
+		// For environments that do not have a `window` with a `document`
+		// (such as Node.js), expose a factory as module.exports.
+		// This accentuates the need for the creation of a real `window`.
 		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info
+		// See ticket #14549 for more info.
 		module.exports = global.document ?
 			factory( global, true ) :
 			function( w ) {
@@ -38,10 +126,10 @@
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
 
-// Can't do this because several apps including ASP.NET trace
+// Support: Firefox 18+
+// Can't be in strict mode, several libs including ASP.NET trace
 // the stack via arguments.caller.callee and Firefox dies if
 // you try to trace through "use strict" call chains. (#13335)
-// Support: Firefox 18+
 //
 
 var arr = [];
@@ -68,7 +156,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.1",
+	version = "2.1.4",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -186,7 +274,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	if ( typeof target === "boolean" ) {
 		deep = target;
 
-		// skip the boolean and the target
+		// Skip the boolean and the target
 		target = arguments[ i ] || {};
 		i++;
 	}
@@ -196,7 +284,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 		target = {};
 	}
 
-	// extend jQuery itself if only one argument is passed
+	// Extend jQuery itself if only one argument is passed
 	if ( i === length ) {
 		target = this;
 		i--;
@@ -253,9 +341,6 @@ jQuery.extend({
 
 	noop: function() {},
 
-	// See test/unit/core.js for details concerning isFunction.
-	// Since version 1.3, DOM methods and functions like alert
-	// aren't supported. They return false on IE (#2968).
 	isFunction: function( obj ) {
 		return jQuery.type(obj) === "function";
 	},
@@ -270,7 +355,8 @@ jQuery.extend({
 		// parseFloat NaNs numeric-cast false positives (null|true|false|"")
 		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
 		// subtraction forces infinities to NaN
-		return !jQuery.isArray( obj ) && obj - parseFloat( obj ) >= 0;
+		// adding 1 corrects loss of precision from parseFloat (#15100)
+		return !jQuery.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
 	},
 
 	isPlainObject: function( obj ) {
@@ -304,7 +390,7 @@ jQuery.extend({
 		if ( obj == null ) {
 			return obj + "";
 		}
-		// Support: Android < 4.0, iOS < 6 (functionish RegExp)
+		// Support: Android<4.0, iOS<6 (functionish RegExp)
 		return typeof obj === "object" || typeof obj === "function" ?
 			class2type[ toString.call(obj) ] || "object" :
 			typeof obj;
@@ -334,6 +420,7 @@ jQuery.extend({
 	},
 
 	// Convert dashed to camelCase; used by the css and data modules
+	// Support: IE9-11+
 	// Microsoft forgot to hump their vendor prefix (#9572)
 	camelCase: function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
@@ -533,7 +620,12 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 });
 
 function isArraylike( obj ) {
-	var length = obj.length,
+
+	// Support: iOS 8.2 (not reproducible in simulator)
+	// `in` check used to prevent JIT error (gh-2145)
+	// hasOwn isn't used here due to false negatives
+	// regarding Nodelist length in IE
+	var length = "length" in obj && obj.length,
 		type = jQuery.type( obj );
 
 	if ( type === "function" || jQuery.isWindow( obj ) ) {
@@ -549,14 +641,14 @@ function isArraylike( obj ) {
 }
 var Sizzle =
 /*!
- * Sizzle CSS Selector Engine v1.10.19
+ * Sizzle CSS Selector Engine v2.2.0-pre
  * http://sizzlejs.com/
  *
- * Copyright 2013 jQuery Foundation, Inc. and other contributors
+ * Copyright 2008, 2014 jQuery Foundation, Inc. and other contributors
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-04-18
+ * Date: 2014-12-16
  */
 (function( window ) {
 
@@ -583,7 +675,7 @@ var i,
 	contains,
 
 	// Instance-specific data
-	expando = "sizzle" + -(new Date()),
+	expando = "sizzle" + 1 * new Date(),
 	preferredDoc = window.document,
 	dirruns = 0,
 	done = 0,
@@ -598,7 +690,6 @@ var i,
 	},
 
 	// General-purpose constants
-	strundefined = typeof undefined,
 	MAX_NEGATIVE = 1 << 31,
 
 	// Instance methods
@@ -608,12 +699,13 @@ var i,
 	push_native = arr.push,
 	push = arr.push,
 	slice = arr.slice,
-	// Use a stripped-down indexOf if we can't use a native one
-	indexOf = arr.indexOf || function( elem ) {
+	// Use a stripped-down indexOf as it's faster than native
+	// http://jsperf.com/thor-indexof-vs-for/5
+	indexOf = function( list, elem ) {
 		var i = 0,
-			len = this.length;
+			len = list.length;
 		for ( ; i < len; i++ ) {
-			if ( this[i] === elem ) {
+			if ( list[i] === elem ) {
 				return i;
 			}
 		}
@@ -653,6 +745,7 @@ var i,
 		")\\)|)",
 
 	// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
+	rwhitespace = new RegExp( whitespace + "+", "g" ),
 	rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g" ),
 
 	rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" ),
@@ -704,6 +797,14 @@ var i,
 				String.fromCharCode( high + 0x10000 ) :
 				// Supplemental Plane codepoint (surrogate pair)
 				String.fromCharCode( high >> 10 | 0xD800, high & 0x3FF | 0xDC00 );
+	},
+
+	// Used for iframes
+	// See setDocument()
+	// Removing the function wrapper causes a "Permission Denied"
+	// error in IE
+	unloadHandler = function() {
+		setDocument();
 	};
 
 // Optimize for push.apply( _, NodeList )
@@ -746,19 +847,18 @@ function Sizzle( selector, context, results, seed ) {
 
 	context = context || document;
 	results = results || [];
+	nodeType = context.nodeType;
 
-	if ( !selector || typeof selector !== "string" ) {
+	if ( typeof selector !== "string" || !selector ||
+		nodeType !== 1 && nodeType !== 9 && nodeType !== 11 ) {
+
 		return results;
 	}
 
-	if ( (nodeType = context.nodeType) !== 1 && nodeType !== 9 ) {
-		return [];
-	}
+	if ( !seed && documentIsHTML ) {
 
-	if ( documentIsHTML && !seed ) {
-
-		// Shortcuts
-		if ( (match = rquickExpr.exec( selector )) ) {
+		// Try to shortcut find operations when possible (e.g., not under DocumentFragment)
+		if ( nodeType !== 11 && (match = rquickExpr.exec( selector )) ) {
 			// Speed-up: Sizzle("#ID")
 			if ( (m = match[1]) ) {
 				if ( nodeType === 9 ) {
@@ -790,7 +890,7 @@ function Sizzle( selector, context, results, seed ) {
 				return results;
 
 			// Speed-up: Sizzle(".CLASS")
-			} else if ( (m = match[3]) && support.getElementsByClassName && context.getElementsByClassName ) {
+			} else if ( (m = match[3]) && support.getElementsByClassName ) {
 				push.apply( results, context.getElementsByClassName( m ) );
 				return results;
 			}
@@ -800,7 +900,7 @@ function Sizzle( selector, context, results, seed ) {
 		if ( support.qsa && (!rbuggyQSA || !rbuggyQSA.test( selector )) ) {
 			nid = old = expando;
 			newContext = context;
-			newSelector = nodeType === 9 && selector;
+			newSelector = nodeType !== 1 && selector;
 
 			// qSA works strangely on Element-rooted queries
 			// We can work around this by specifying an extra ID on the root
@@ -987,7 +1087,7 @@ function createPositionalPseudo( fn ) {
  * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
  */
 function testContext( context ) {
-	return context && typeof context.getElementsByTagName !== strundefined && context;
+	return context && typeof context.getElementsByTagName !== "undefined" && context;
 }
 
 // Expose support vars for convenience
@@ -1011,9 +1111,8 @@ isXML = Sizzle.isXML = function( elem ) {
  * @returns {Object} Returns the current document
  */
 setDocument = Sizzle.setDocument = function( node ) {
-	var hasCompare,
-		doc = node ? node.ownerDocument || node : preferredDoc,
-		parent = doc.defaultView;
+	var hasCompare, parent,
+		doc = node ? node.ownerDocument || node : preferredDoc;
 
 	// If no document and documentElement is available, return
 	if ( doc === document || doc.nodeType !== 9 || !doc.documentElement ) {
@@ -1023,9 +1122,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// Set our document
 	document = doc;
 	docElem = doc.documentElement;
-
-	// Support tests
-	documentIsHTML = !isXML( doc );
+	parent = doc.defaultView;
 
 	// Support: IE>8
 	// If iframe document is assigned to "document" variable and if iframe has been reloaded,
@@ -1034,21 +1131,22 @@ setDocument = Sizzle.setDocument = function( node ) {
 	if ( parent && parent !== parent.top ) {
 		// IE11 does not have attachEvent, so all must suffer
 		if ( parent.addEventListener ) {
-			parent.addEventListener( "unload", function() {
-				setDocument();
-			}, false );
+			parent.addEventListener( "unload", unloadHandler, false );
 		} else if ( parent.attachEvent ) {
-			parent.attachEvent( "onunload", function() {
-				setDocument();
-			});
+			parent.attachEvent( "onunload", unloadHandler );
 		}
 	}
+
+	/* Support tests
+	---------------------------------------------------------------------- */
+	documentIsHTML = !isXML( doc );
 
 	/* Attributes
 	---------------------------------------------------------------------- */
 
 	// Support: IE<8
-	// Verify that getAttribute really returns attributes and not properties (excepting IE8 booleans)
+	// Verify that getAttribute really returns attributes and not properties
+	// (excepting IE8 booleans)
 	support.attributes = assert(function( div ) {
 		div.className = "i";
 		return !div.getAttribute("className");
@@ -1063,17 +1161,8 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return !div.getElementsByTagName("*").length;
 	});
 
-	// Check if getElementsByClassName can be trusted
-	support.getElementsByClassName = rnative.test( doc.getElementsByClassName ) && assert(function( div ) {
-		div.innerHTML = "<div class='a'></div><div class='a i'></div>";
-
-		// Support: Safari<4
-		// Catch class over-caching
-		div.firstChild.className = "i";
-		// Support: Opera<10
-		// Catch gEBCN failure to find non-leading classes
-		return div.getElementsByClassName("i").length === 2;
-	});
+	// Support: IE<9
+	support.getElementsByClassName = rnative.test( doc.getElementsByClassName );
 
 	// Support: IE<10
 	// Check if getElementById returns elements by name
@@ -1087,7 +1176,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// ID find and filter
 	if ( support.getById ) {
 		Expr.find["ID"] = function( id, context ) {
-			if ( typeof context.getElementById !== strundefined && documentIsHTML ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
 				var m = context.getElementById( id );
 				// Check parentNode to catch when Blackberry 4.6 returns
 				// nodes that are no longer in the document #6963
@@ -1108,7 +1197,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		Expr.filter["ID"] =  function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
-				var node = typeof elem.getAttributeNode !== strundefined && elem.getAttributeNode("id");
+				var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
 				return node && node.value === attrId;
 			};
 		};
@@ -1117,14 +1206,20 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// Tag
 	Expr.find["TAG"] = support.getElementsByTagName ?
 		function( tag, context ) {
-			if ( typeof context.getElementsByTagName !== strundefined ) {
+			if ( typeof context.getElementsByTagName !== "undefined" ) {
 				return context.getElementsByTagName( tag );
+
+			// DocumentFragment nodes don't have gEBTN
+			} else if ( support.qsa ) {
+				return context.querySelectorAll( tag );
 			}
 		} :
+
 		function( tag, context ) {
 			var elem,
 				tmp = [],
 				i = 0,
+				// By happy coincidence, a (broken) gEBTN appears on DocumentFragment nodes too
 				results = context.getElementsByTagName( tag );
 
 			// Filter out possible comments
@@ -1142,7 +1237,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 	// Class
 	Expr.find["CLASS"] = support.getElementsByClassName && function( className, context ) {
-		if ( typeof context.getElementsByClassName !== strundefined && documentIsHTML ) {
+		if ( documentIsHTML ) {
 			return context.getElementsByClassName( className );
 		}
 	};
@@ -1171,13 +1266,15 @@ setDocument = Sizzle.setDocument = function( node ) {
 			// setting a boolean content attribute,
 			// since its presence should be enough
 			// http://bugs.jquery.com/ticket/12359
-			div.innerHTML = "<select msallowclip=''><option selected=''></option></select>";
+			docElem.appendChild( div ).innerHTML = "<a id='" + expando + "'></a>" +
+				"<select id='" + expando + "-\f]' msallowcapture=''>" +
+				"<option selected=''></option></select>";
 
 			// Support: IE8, Opera 11-12.16
 			// Nothing should be selected when empty strings follow ^= or $= or *=
 			// The test attribute must be unknown in Opera but "safe" for WinRT
 			// http://msdn.microsoft.com/en-us/library/ie/hh465388.aspx#attribute_section
-			if ( div.querySelectorAll("[msallowclip^='']").length ) {
+			if ( div.querySelectorAll("[msallowcapture^='']").length ) {
 				rbuggyQSA.push( "[*^$]=" + whitespace + "*(?:''|\"\")" );
 			}
 
@@ -1187,11 +1284,23 @@ setDocument = Sizzle.setDocument = function( node ) {
 				rbuggyQSA.push( "\\[" + whitespace + "*(?:value|" + booleans + ")" );
 			}
 
+			// Support: Chrome<29, Android<4.2+, Safari<7.0+, iOS<7.0+, PhantomJS<1.9.7+
+			if ( !div.querySelectorAll( "[id~=" + expando + "-]" ).length ) {
+				rbuggyQSA.push("~=");
+			}
+
 			// Webkit/Opera - :checked should return selected option elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			// IE8 throws error here and will not see later tests
 			if ( !div.querySelectorAll(":checked").length ) {
 				rbuggyQSA.push(":checked");
+			}
+
+			// Support: Safari 8+, iOS 8+
+			// https://bugs.webkit.org/show_bug.cgi?id=136851
+			// In-page `selector#id sibing-combinator selector` fails
+			if ( !div.querySelectorAll( "a#" + expando + "+*" ).length ) {
+				rbuggyQSA.push(".#.+[+~]");
 			}
 		});
 
@@ -1309,7 +1418,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 			// Maintain original order
 			return sortInput ?
-				( indexOf.call( sortInput, a ) - indexOf.call( sortInput, b ) ) :
+				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
 				0;
 		}
 
@@ -1336,7 +1445,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 				aup ? -1 :
 				bup ? 1 :
 				sortInput ?
-				( indexOf.call( sortInput, a ) - indexOf.call( sortInput, b ) ) :
+				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
 				0;
 
 		// If the nodes are siblings, we can do a quick check
@@ -1399,7 +1508,7 @@ Sizzle.matchesSelector = function( elem, expr ) {
 					elem.document && elem.document.nodeType !== 11 ) {
 				return ret;
 			}
-		} catch(e) {}
+		} catch (e) {}
 	}
 
 	return Sizzle( expr, document, null, [ elem ] ).length > 0;
@@ -1618,7 +1727,7 @@ Expr = Sizzle.selectors = {
 			return pattern ||
 				(pattern = new RegExp( "(^|" + whitespace + ")" + className + "(" + whitespace + "|$)" )) &&
 				classCache( className, function( elem ) {
-					return pattern.test( typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== strundefined && elem.getAttribute("class") || "" );
+					return pattern.test( typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== "undefined" && elem.getAttribute("class") || "" );
 				});
 		},
 
@@ -1640,7 +1749,7 @@ Expr = Sizzle.selectors = {
 					operator === "^=" ? check && result.indexOf( check ) === 0 :
 					operator === "*=" ? check && result.indexOf( check ) > -1 :
 					operator === "$=" ? check && result.slice( -check.length ) === check :
-					operator === "~=" ? ( " " + result + " " ).indexOf( check ) > -1 :
+					operator === "~=" ? ( " " + result.replace( rwhitespace, " " ) + " " ).indexOf( check ) > -1 :
 					operator === "|=" ? result === check || result.slice( 0, check.length + 1 ) === check + "-" :
 					false;
 			};
@@ -1760,7 +1869,7 @@ Expr = Sizzle.selectors = {
 							matched = fn( seed, argument ),
 							i = matched.length;
 						while ( i-- ) {
-							idx = indexOf.call( seed, matched[i] );
+							idx = indexOf( seed, matched[i] );
 							seed[ idx ] = !( matches[ idx ] = matched[i] );
 						}
 					}) :
@@ -1799,6 +1908,8 @@ Expr = Sizzle.selectors = {
 				function( elem, context, xml ) {
 					input[0] = elem;
 					matcher( input, null, xml, results );
+					// Don't keep the element (issue #299)
+					input[0] = null;
 					return !results.pop();
 				};
 		}),
@@ -1810,6 +1921,7 @@ Expr = Sizzle.selectors = {
 		}),
 
 		"contains": markFunction(function( text ) {
+			text = text.replace( runescape, funescape );
 			return function( elem ) {
 				return ( elem.textContent || elem.innerText || getText( elem ) ).indexOf( text ) > -1;
 			};
@@ -2231,7 +2343,7 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 				i = matcherOut.length;
 				while ( i-- ) {
 					if ( (elem = matcherOut[i]) &&
-						(temp = postFinder ? indexOf.call( seed, elem ) : preMap[i]) > -1 ) {
+						(temp = postFinder ? indexOf( seed, elem ) : preMap[i]) > -1 ) {
 
 						seed[temp] = !(results[temp] = elem);
 					}
@@ -2266,13 +2378,16 @@ function matcherFromTokens( tokens ) {
 			return elem === checkContext;
 		}, implicitRelative, true ),
 		matchAnyContext = addCombinator( function( elem ) {
-			return indexOf.call( checkContext, elem ) > -1;
+			return indexOf( checkContext, elem ) > -1;
 		}, implicitRelative, true ),
 		matchers = [ function( elem, context, xml ) {
-			return ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
+			var ret = ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
 				(checkContext = context).nodeType ?
 					matchContext( elem, context, xml ) :
 					matchAnyContext( elem, context, xml ) );
+			// Avoid hanging onto element (issue #299)
+			checkContext = null;
+			return ret;
 		} ];
 
 	for ( ; i < len; i++ ) {
@@ -2522,7 +2637,7 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 // Sort stability
 support.sortStable = expando.split("").sort( sortOrder ).join("") === expando;
 
-// Support: Chrome<14
+// Support: Chrome 14-35+
 // Always assume duplicates if they aren't passed to the comparison function
 support.detectDuplicates = !!hasDuplicate;
 
@@ -2731,7 +2846,7 @@ var rootjQuery,
 				if ( match[1] ) {
 					context = context instanceof jQuery ? context[0] : context;
 
-					// scripts is true for back-compat
+					// Option to run scripts is true for back-compat
 					// Intentionally let the error be thrown if parseHTML is not present
 					jQuery.merge( this, jQuery.parseHTML(
 						match[1],
@@ -2759,8 +2874,8 @@ var rootjQuery,
 				} else {
 					elem = document.getElementById( match[2] );
 
-					// Check parentNode to catch when Blackberry 4.6 returns
-					// nodes that are no longer in the document #6963
+					// Support: Blackberry 4.6
+					// gEBID returns nodes no longer in the document (#6963)
 					if ( elem && elem.parentNode ) {
 						// Inject the element directly into the jQuery object
 						this.length = 1;
@@ -2813,7 +2928,7 @@ rootjQuery = jQuery( document );
 
 
 var rparentsprev = /^(?:parents|prev(?:Until|All))/,
-	// methods guaranteed to produce a unique set when starting from a unique set
+	// Methods guaranteed to produce a unique set when starting from a unique set
 	guaranteedUnique = {
 		children: true,
 		contents: true,
@@ -2893,8 +3008,7 @@ jQuery.fn.extend({
 		return this.pushStack( matched.length > 1 ? jQuery.unique( matched ) : matched );
 	},
 
-	// Determine the position of an element within
-	// the matched set of elements
+	// Determine the position of an element within the set
 	index: function( elem ) {
 
 		// No argument, return index in parent
@@ -2902,7 +3016,7 @@ jQuery.fn.extend({
 			return ( this[ 0 ] && this[ 0 ].parentNode ) ? this.first().prevAll().length : -1;
 		}
 
-		// index in selector
+		// Index in selector
 		if ( typeof elem === "string" ) {
 			return indexOf.call( jQuery( elem ), this[ 0 ] );
 		}
@@ -3318,7 +3432,7 @@ jQuery.extend({
 
 			progressValues, progressContexts, resolveContexts;
 
-		// add listeners to Deferred subordinates; treat others as resolved
+		// Add listeners to Deferred subordinates; treat others as resolved
 		if ( length > 1 ) {
 			progressValues = new Array( length );
 			progressContexts = new Array( length );
@@ -3335,7 +3449,7 @@ jQuery.extend({
 			}
 		}
 
-		// if we're not waiting on anything, resolve the master
+		// If we're not waiting on anything, resolve the master
 		if ( !remaining ) {
 			deferred.resolveWith( resolveContexts, resolveValues );
 		}
@@ -3414,7 +3528,7 @@ jQuery.ready.promise = function( obj ) {
 		readyList = jQuery.Deferred();
 
 		// Catch cases where $(document).ready() is called after the browser event has already occurred.
-		// we once tried to use readyState "interactive" here, but it caused issues like the one
+		// We once tried to use readyState "interactive" here, but it caused issues like the one
 		// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15
 		if ( document.readyState === "complete" ) {
 			// Handle it asynchronously to allow scripts the opportunity to delay ready
@@ -3508,7 +3622,7 @@ jQuery.acceptData = function( owner ) {
 
 
 function Data() {
-	// Support: Android < 4,
+	// Support: Android<4,
 	// Old WebKit does not have Object.preventExtensions/freeze method,
 	// return new empty object instead with no [[set]] accessor
 	Object.defineProperty( this.cache = {}, 0, {
@@ -3517,7 +3631,7 @@ function Data() {
 		}
 	});
 
-	this.expando = jQuery.expando + Math.random();
+	this.expando = jQuery.expando + Data.uid++;
 }
 
 Data.uid = 1;
@@ -3545,7 +3659,7 @@ Data.prototype = {
 				descriptor[ this.expando ] = { value: unlock };
 				Object.defineProperties( owner, descriptor );
 
-			// Support: Android < 4
+			// Support: Android<4
 			// Fallback to a less secure definition
 			} catch ( e ) {
 				descriptor[ this.expando ] = unlock;
@@ -3685,17 +3799,16 @@ var data_user = new Data();
 
 
 
-/*
-	Implementation Summary
+//	Implementation Summary
+//
+//	1. Enforce API surface and semantic compatibility with 1.9.x branch
+//	2. Improve the module's maintainability by reducing the storage
+//		paths to a single mechanism.
+//	3. Use the same single mechanism to support "private" and "user" data.
+//	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
+//	5. Avoid exposing implementation details on user objects (eg. expando properties)
+//	6. Provide a clear path for implementation upgrade to WeakMap in 2014
 
-	1. Enforce API surface and semantic compatibility with 1.9.x branch
-	2. Improve the module's maintainability by reducing the storage
-		paths to a single mechanism.
-	3. Use the same single mechanism to support "private" and "user" data.
-	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
-	5. Avoid exposing implementation details on user objects (eg. expando properties)
-	6. Provide a clear path for implementation upgrade to WeakMap in 2014
-*/
 var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
 	rmultiDash = /([A-Z])/g;
 
@@ -3900,7 +4013,7 @@ jQuery.extend({
 				queue.unshift( "inprogress" );
 			}
 
-			// clear up the last queue stop function
+			// Clear up the last queue stop function
 			delete hooks.stop;
 			fn.call( elem, next, hooks );
 		}
@@ -3910,7 +4023,7 @@ jQuery.extend({
 		}
 	},
 
-	// not intended for public consumption - generates a queueHooks object, or returns the current one
+	// Not public - generate a queueHooks object, or return the current one
 	_queueHooks: function( elem, type ) {
 		var key = type + "queueHooks";
 		return data_priv.get( elem, key ) || data_priv.access( elem, key, {
@@ -3940,7 +4053,7 @@ jQuery.fn.extend({
 			this.each(function() {
 				var queue = jQuery.queue( this, type, data );
 
-				// ensure a hooks for this queue
+				// Ensure a hooks for this queue
 				jQuery._queueHooks( this, type );
 
 				if ( type === "fx" && queue[0] !== "inprogress" ) {
@@ -4007,21 +4120,22 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 		div = fragment.appendChild( document.createElement( "div" ) ),
 		input = document.createElement( "input" );
 
-	// #11217 - WebKit loses check when the name is after the checked attribute
+	// Support: Safari<=5.1
+	// Check state lost if the name is set (#11217)
 	// Support: Windows Web Apps (WWA)
-	// `name` and `type` need .setAttribute for WWA
+	// `name` and `type` must use .setAttribute for WWA (#14901)
 	input.setAttribute( "type", "radio" );
 	input.setAttribute( "checked", "checked" );
 	input.setAttribute( "name", "t" );
 
 	div.appendChild( input );
 
-	// Support: Safari 5.1, iOS 5.1, Android 4.x, Android 2.3
-	// old WebKit doesn't clone checked state correctly in fragments
+	// Support: Safari<=5.1, Android<4.2
+	// Older WebKit doesn't clone checked state correctly in fragments
 	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
 
+	// Support: IE<=11+
 	// Make sure textarea (and checkbox) defaultValue is properly cloned
-	// Support: IE9-IE11+
 	div.innerHTML = "<textarea>x</textarea>";
 	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
 })();
@@ -4399,8 +4513,8 @@ jQuery.event = {
 			j = 0;
 			while ( (handleObj = matched.handlers[ j++ ]) && !event.isImmediatePropagationStopped() ) {
 
-				// Triggered event must either 1) have no namespace, or
-				// 2) have namespace(s) a subset or equal to those in the bound event (both can have no namespace).
+				// Triggered event must either 1) have no namespace, or 2) have namespace(s)
+				// a subset or equal to those in the bound event (both can have no namespace).
 				if ( !event.namespace_re || event.namespace_re.test( handleObj.namespace ) ) {
 
 					event.handleObj = handleObj;
@@ -4550,7 +4664,7 @@ jQuery.event = {
 			event.target = document;
 		}
 
-		// Support: Safari 6.0+, Chrome < 28
+		// Support: Safari 6.0+, Chrome<28
 		// Target should not be a text node (#504, #13143)
 		if ( event.target.nodeType === 3 ) {
 			event.target = event.target.parentNode;
@@ -4655,7 +4769,7 @@ jQuery.Event = function( src, props ) {
 		// by a handler lower down the tree; reflect the correct value.
 		this.isDefaultPrevented = src.defaultPrevented ||
 				src.defaultPrevented === undefined &&
-				// Support: Android < 4.0
+				// Support: Android<4.0
 				src.returnValue === false ?
 			returnTrue :
 			returnFalse;
@@ -4745,8 +4859,8 @@ jQuery.each({
 	};
 });
 
-// Create "bubbling" focus and blur events
 // Support: Firefox, Chrome, Safari
+// Create "bubbling" focus and blur events
 if ( !support.focusinBubbles ) {
 	jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
 
@@ -4899,7 +5013,7 @@ var
 	// We have to close these tags to support XHTML (#13200)
 	wrapMap = {
 
-		// Support: IE 9
+		// Support: IE9
 		option: [ 1, "<select multiple='multiple'>", "</select>" ],
 
 		thead: [ 1, "<table>", "</table>" ],
@@ -4910,7 +5024,7 @@ var
 		_default: [ 0, "", "" ]
 	};
 
-// Support: IE 9
+// Support: IE9
 wrapMap.optgroup = wrapMap.option;
 
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
@@ -5000,7 +5114,7 @@ function getAll( context, tag ) {
 		ret;
 }
 
-// Support: IE >= 9
+// Fix IE bugs, see support tests
 function fixInput( src, dest ) {
 	var nodeName = dest.nodeName.toLowerCase();
 
@@ -5020,8 +5134,7 @@ jQuery.extend({
 			clone = elem.cloneNode( true ),
 			inPage = jQuery.contains( elem.ownerDocument, elem );
 
-		// Support: IE >= 9
-		// Fix Cloning issues
+		// Fix IE cloning issues
 		if ( !support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
 				!jQuery.isXMLDoc( elem ) ) {
 
@@ -5072,8 +5185,8 @@ jQuery.extend({
 
 				// Add nodes directly
 				if ( jQuery.type( elem ) === "object" ) {
-					// Support: QtWebKit
-					// jQuery.merge because push.apply(_, arraylike) throws
+					// Support: QtWebKit, PhantomJS
+					// push.apply(_, arraylike) throws on ancient WebKit
 					jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
 
 				// Convert non-html into a text node
@@ -5095,15 +5208,14 @@ jQuery.extend({
 						tmp = tmp.lastChild;
 					}
 
-					// Support: QtWebKit
-					// jQuery.merge because push.apply(_, arraylike) throws
+					// Support: QtWebKit, PhantomJS
+					// push.apply(_, arraylike) throws on ancient WebKit
 					jQuery.merge( nodes, tmp.childNodes );
 
 					// Remember the top-level container
 					tmp = fragment.firstChild;
 
-					// Fixes #12346
-					// Support: Webkit, IE
+					// Ensure the created nodes are orphaned (#12392)
 					tmp.textContent = "";
 				}
 			}
@@ -5465,7 +5577,7 @@ function actualDisplay( name, doc ) {
 		// getDefaultComputedStyle might be reliably used only on attached element
 		display = window.getDefaultComputedStyle && ( style = window.getDefaultComputedStyle( elem[ 0 ] ) ) ?
 
-			// Use of this method is a temporary fix (more like optmization) until something better comes along,
+			// Use of this method is a temporary fix (more like optimization) until something better comes along,
 			// since it was removed from specification and supported only in FF
 			style.display : jQuery.css( elem[ 0 ], "display" );
 
@@ -5515,7 +5627,14 @@ var rmargin = (/^margin/);
 var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
 
 var getStyles = function( elem ) {
-		return elem.ownerDocument.defaultView.getComputedStyle( elem, null );
+		// Support: IE<=11+, Firefox<=30+ (#15098, #14150)
+		// IE throws on elements created in popups
+		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
+		if ( elem.ownerDocument.defaultView.opener ) {
+			return elem.ownerDocument.defaultView.getComputedStyle( elem, null );
+		}
+
+		return window.getComputedStyle( elem, null );
 	};
 
 
@@ -5527,7 +5646,7 @@ function curCSS( elem, name, computed ) {
 	computed = computed || getStyles( elem );
 
 	// Support: IE9
-	// getPropertyValue is only needed for .css('filter') in IE9, see #12537
+	// getPropertyValue is only needed for .css('filter') (#12537)
 	if ( computed ) {
 		ret = computed.getPropertyValue( name ) || computed[ name ];
 	}
@@ -5573,15 +5692,13 @@ function addGetHookIf( conditionFn, hookFn ) {
 	return {
 		get: function() {
 			if ( conditionFn() ) {
-				// Hook not needed (or it's not possible to use it due to missing dependency),
-				// remove it.
-				// Since there are no other hooks for marginRight, remove the whole object.
+				// Hook not needed (or it's not possible to use it due
+				// to missing dependency), remove it.
 				delete this.get;
 				return;
 			}
 
 			// Hook needed; redefine it so that the support test is not executed again.
-
 			return (this.get = hookFn).apply( this, arguments );
 		}
 	};
@@ -5598,6 +5715,8 @@ function addGetHookIf( conditionFn, hookFn ) {
 		return;
 	}
 
+	// Support: IE9-11+
+	// Style of cloned element affects source element cloned (#8908)
 	div.style.backgroundClip = "content-box";
 	div.cloneNode( true ).style.backgroundClip = "";
 	support.clearCloneStyle = div.style.backgroundClip === "content-box";
@@ -5630,6 +5749,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 	if ( window.getComputedStyle ) {
 		jQuery.extend( support, {
 			pixelPosition: function() {
+
 				// This test is executed only once but we still do memoizing
 				// since we can use the boxSizingReliable pre-computing.
 				// No need to check if the test was already performed, though.
@@ -5643,6 +5763,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 				return boxSizingReliableVal;
 			},
 			reliableMarginRight: function() {
+
 				// Support: Android 2.3
 				// Check if div with explicit width and no margin-right incorrectly
 				// gets computed margin-right based on width of container. (#3333)
@@ -5664,6 +5785,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 				ret = !parseFloat( window.getComputedStyle( marginDiv, null ).marginRight );
 
 				docElem.removeChild( container );
+				div.removeChild( marginDiv );
 
 				return ret;
 			}
@@ -5695,8 +5817,8 @@ jQuery.swap = function( elem, options, callback, args ) {
 
 
 var
-	// swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
-	// see here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+	// Swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
+	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
 	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
 	rnumsplit = new RegExp( "^(" + pnum + ")(.*)$", "i" ),
 	rrelNum = new RegExp( "^([+-])=(" + pnum + ")", "i" ),
@@ -5709,15 +5831,15 @@ var
 
 	cssPrefixes = [ "Webkit", "O", "Moz", "ms" ];
 
-// return a css property mapped to a potentially vendor prefixed property
+// Return a css property mapped to a potentially vendor prefixed property
 function vendorPropName( style, name ) {
 
-	// shortcut for names that are not vendor prefixed
+	// Shortcut for names that are not vendor prefixed
 	if ( name in style ) {
 		return name;
 	}
 
-	// check for vendor prefixed names
+	// Check for vendor prefixed names
 	var capName = name[0].toUpperCase() + name.slice(1),
 		origName = name,
 		i = cssPrefixes.length;
@@ -5750,7 +5872,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 		val = 0;
 
 	for ( ; i < 4; i += 2 ) {
-		// both box models exclude margin, so add it if we want it
+		// Both box models exclude margin, so add it if we want it
 		if ( extra === "margin" ) {
 			val += jQuery.css( elem, extra + cssExpand[ i ], true, styles );
 		}
@@ -5761,15 +5883,15 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 				val -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 			}
 
-			// at this point, extra isn't border nor margin, so remove border
+			// At this point, extra isn't border nor margin, so remove border
 			if ( extra !== "margin" ) {
 				val -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
 		} else {
-			// at this point, extra isn't content, so add padding
+			// At this point, extra isn't content, so add padding
 			val += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 
-			// at this point, extra isn't content nor padding, so add border
+			// At this point, extra isn't content nor padding, so add border
 			if ( extra !== "padding" ) {
 				val += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
@@ -5787,7 +5909,7 @@ function getWidthOrHeight( elem, name, extra ) {
 		styles = getStyles( elem ),
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
-	// some non-html elements return undefined for offsetWidth, so check for null/undefined
+	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
 	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
 	// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
 	if ( val <= 0 || val == null ) {
@@ -5802,7 +5924,7 @@ function getWidthOrHeight( elem, name, extra ) {
 			return val;
 		}
 
-		// we need the check for style in case a browser which returns unreliable values
+		// Check for style in case a browser which returns unreliable values
 		// for getComputedStyle silently falls back to the reliable elem.style
 		valueIsBorderBox = isBorderBox &&
 			( support.boxSizingReliable() || val === elem.style[ name ] );
@@ -5811,7 +5933,7 @@ function getWidthOrHeight( elem, name, extra ) {
 		val = parseFloat( val ) || 0;
 	}
 
-	// use the active box-sizing model to add/subtract irrelevant styles
+	// Use the active box-sizing model to add/subtract irrelevant styles
 	return ( val +
 		augmentWidthOrHeight(
 			elem,
@@ -5875,12 +5997,14 @@ function showHide( elements, show ) {
 }
 
 jQuery.extend({
+
 	// Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property
 	cssHooks: {
 		opacity: {
 			get: function( elem, computed ) {
 				if ( computed ) {
+
 					// We should always get a number back from opacity
 					var ret = curCSS( elem, "opacity" );
 					return ret === "" ? "1" : ret;
@@ -5908,12 +6032,12 @@ jQuery.extend({
 	// Add in properties whose names you wish to fix before
 	// setting or getting the value
 	cssProps: {
-		// normalize float css property
 		"float": "cssFloat"
 	},
 
 	// Get and set the style property on a DOM Node
 	style: function( elem, name, value, extra ) {
+
 		// Don't set styles on text and comment nodes
 		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
 			return;
@@ -5926,33 +6050,32 @@ jQuery.extend({
 
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( style, origName ) );
 
-		// gets hook for the prefixed version
-		// followed by the unprefixed version
+		// Gets hook for the prefixed version, then unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// Check if we're setting a value
 		if ( value !== undefined ) {
 			type = typeof value;
 
-			// convert relative number strings (+= or -=) to relative numbers. #7345
+			// Convert "+=" or "-=" to relative numbers (#7345)
 			if ( type === "string" && (ret = rrelNum.exec( value )) ) {
 				value = ( ret[1] + 1 ) * ret[2] + parseFloat( jQuery.css( elem, name ) );
 				// Fixes bug #9237
 				type = "number";
 			}
 
-			// Make sure that null and NaN values aren't set. See: #7116
+			// Make sure that null and NaN values aren't set (#7116)
 			if ( value == null || value !== value ) {
 				return;
 			}
 
-			// If a number was passed in, add 'px' to the (except for certain CSS properties)
+			// If a number, add 'px' to the (except for certain CSS properties)
 			if ( type === "number" && !jQuery.cssNumber[ origName ] ) {
 				value += "px";
 			}
 
-			// Fixes #8908, it can be done more correctly by specifying setters in cssHooks,
-			// but it would mean to define eight (for every problematic property) identical functions
+			// Support: IE9-11+
+			// background-* props affect original clone's values
 			if ( !support.clearCloneStyle && value === "" && name.indexOf( "background" ) === 0 ) {
 				style[ name ] = "inherit";
 			}
@@ -5980,8 +6103,7 @@ jQuery.extend({
 		// Make sure that we're working with the right name
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( elem.style, origName ) );
 
-		// gets hook for the prefixed version
-		// followed by the unprefixed version
+		// Try prefixed name followed by the unprefixed name
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// If a hook was provided get the computed value from there
@@ -5994,12 +6116,12 @@ jQuery.extend({
 			val = curCSS( elem, name, styles );
 		}
 
-		//convert "normal" to computed value
+		// Convert "normal" to computed value
 		if ( val === "normal" && name in cssNormalTransform ) {
 			val = cssNormalTransform[ name ];
 		}
 
-		// Return, converting to number if forced or a qualifier was provided and val looks numeric
+		// Make numeric if forced or a qualifier was provided and val looks numeric
 		if ( extra === "" || extra ) {
 			num = parseFloat( val );
 			return extra === true || jQuery.isNumeric( num ) ? num || 0 : val;
@@ -6012,8 +6134,9 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 	jQuery.cssHooks[ name ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
-				// certain elements can have dimension info if we invisibly show them
-				// however, it must have a current display style that would benefit from this
+
+				// Certain elements can have dimension info if we invisibly show them
+				// but it must have a current display style that would benefit
 				return rdisplayswap.test( jQuery.css( elem, "display" ) ) && elem.offsetWidth === 0 ?
 					jQuery.swap( elem, cssShow, function() {
 						return getWidthOrHeight( elem, name, extra );
@@ -6041,8 +6164,6 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 jQuery.cssHooks.marginRight = addGetHookIf( support.reliableMarginRight,
 	function( elem, computed ) {
 		if ( computed ) {
-			// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
-			// Work around by temporarily setting element display to inline-block
 			return jQuery.swap( elem, { "display": "inline-block" },
 				curCSS, [ elem, "marginRight" ] );
 		}
@@ -6060,7 +6181,7 @@ jQuery.each({
 			var i = 0,
 				expanded = {},
 
-				// assumes a single number if not a string
+				// Assumes a single number if not a string
 				parts = typeof value === "string" ? value.split(" ") : [ value ];
 
 			for ( ; i < 4; i++ ) {
@@ -6183,17 +6304,18 @@ Tween.propHooks = {
 				return tween.elem[ tween.prop ];
 			}
 
-			// passing an empty string as a 3rd parameter to .css will automatically
-			// attempt a parseFloat and fallback to a string if the parse fails
-			// so, simple values such as "10px" are parsed to Float.
-			// complex values such as "rotate(1rad)" are returned as is.
+			// Passing an empty string as a 3rd parameter to .css will automatically
+			// attempt a parseFloat and fallback to a string if the parse fails.
+			// Simple values such as "10px" are parsed to Float;
+			// complex values such as "rotate(1rad)" are returned as-is.
 			result = jQuery.css( tween.elem, tween.prop, "" );
 			// Empty strings, null, undefined and "auto" are converted to 0.
 			return !result || result === "auto" ? 0 : result;
 		},
 		set: function( tween ) {
-			// use step hook for back compat - use cssHook if its there - use .style if its
-			// available and use plain properties where available
+			// Use step hook for back compat.
+			// Use cssHook if its there.
+			// Use .style if available and use plain properties where available.
 			if ( jQuery.fx.step[ tween.prop ] ) {
 				jQuery.fx.step[ tween.prop ]( tween );
 			} else if ( tween.elem.style && ( tween.elem.style[ jQuery.cssProps[ tween.prop ] ] != null || jQuery.cssHooks[ tween.prop ] ) ) {
@@ -6207,7 +6329,6 @@ Tween.propHooks = {
 
 // Support: IE9
 // Panic based approach to setting things on disconnected nodes
-
 Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
 	set: function( tween ) {
 		if ( tween.elem.nodeType && tween.elem.parentNode ) {
@@ -6263,16 +6384,16 @@ var
 				start = +target || 1;
 
 				do {
-					// If previous iteration zeroed out, double until we get *something*
-					// Use a string for doubling factor so we don't accidentally see scale as unchanged below
+					// If previous iteration zeroed out, double until we get *something*.
+					// Use string for doubling so we don't accidentally see scale as unchanged below
 					scale = scale || ".5";
 
 					// Adjust and apply
 					start = start / scale;
 					jQuery.style( tween.elem, prop, start + unit );
 
-				// Update scale, tolerating zero or NaN from tween.cur()
-				// And breaking the loop if scale is unchanged or perfect, or if we've just had enough
+				// Update scale, tolerating zero or NaN from tween.cur(),
+				// break the loop if scale is unchanged or perfect, or if we've just had enough
 				} while ( scale !== (scale = tween.cur() / target) && scale !== 1 && --maxIterations );
 			}
 
@@ -6304,8 +6425,8 @@ function genFx( type, includeWidth ) {
 		i = 0,
 		attrs = { height: type };
 
-	// if we include width, step value is 1 to do all cssExpand values,
-	// if we don't include width, step value is 2 to skip over Left and Right
+	// If we include width, step value is 1 to do all cssExpand values,
+	// otherwise step value is 2 to skip over Left and Right
 	includeWidth = includeWidth ? 1 : 0;
 	for ( ; i < 4 ; i += 2 - includeWidth ) {
 		which = cssExpand[ i ];
@@ -6327,7 +6448,7 @@ function createTween( value, prop, animation ) {
 	for ( ; index < length; index++ ) {
 		if ( (tween = collection[ index ].call( animation, prop, value )) ) {
 
-			// we're done with this property
+			// We're done with this property
 			return tween;
 		}
 	}
@@ -6342,7 +6463,7 @@ function defaultPrefilter( elem, props, opts ) {
 		hidden = elem.nodeType && isHidden( elem ),
 		dataShow = data_priv.get( elem, "fxshow" );
 
-	// handle queue: false promises
+	// Handle queue: false promises
 	if ( !opts.queue ) {
 		hooks = jQuery._queueHooks( elem, "fx" );
 		if ( hooks.unqueued == null ) {
@@ -6357,8 +6478,7 @@ function defaultPrefilter( elem, props, opts ) {
 		hooks.unqueued++;
 
 		anim.always(function() {
-			// doing this makes sure that the complete handler will be called
-			// before this completes
+			// Ensure the complete handler is called before this completes
 			anim.always(function() {
 				hooks.unqueued--;
 				if ( !jQuery.queue( elem, "fx" ).length ) {
@@ -6368,7 +6488,7 @@ function defaultPrefilter( elem, props, opts ) {
 		});
 	}
 
-	// height/width overflow pass
+	// Height/width overflow pass
 	if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
 		// Make sure that nothing sneaks out
 		// Record all 3 overflow attributes because IE9-10 do not
@@ -6430,7 +6550,7 @@ function defaultPrefilter( elem, props, opts ) {
 			dataShow = data_priv.access( elem, "fxshow", {} );
 		}
 
-		// store state if its toggle - enables .stop().toggle() to "reverse"
+		// Store state if its toggle - enables .stop().toggle() to "reverse"
 		if ( toggle ) {
 			dataShow.hidden = !hidden;
 		}
@@ -6490,8 +6610,8 @@ function propFilter( props, specialEasing ) {
 			value = hooks.expand( value );
 			delete props[ name ];
 
-			// not quite $.extend, this wont overwrite keys already present.
-			// also - reusing 'index' from above because we have the correct "name"
+			// Not quite $.extend, this won't overwrite existing keys.
+			// Reusing 'index' because we have the correct "name"
 			for ( index in value ) {
 				if ( !( index in props ) ) {
 					props[ index ] = value[ index ];
@@ -6510,7 +6630,7 @@ function Animation( elem, properties, options ) {
 		index = 0,
 		length = animationPrefilters.length,
 		deferred = jQuery.Deferred().always( function() {
-			// don't match elem in the :animated selector
+			// Don't match elem in the :animated selector
 			delete tick.elem;
 		}),
 		tick = function() {
@@ -6519,7 +6639,8 @@ function Animation( elem, properties, options ) {
 			}
 			var currentTime = fxNow || createFxNow(),
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
-				// archaic crash bug won't allow us to use 1 - ( 0.5 || 0 ) (#12497)
+				// Support: Android 2.3
+				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
 				temp = remaining / animation.duration || 0,
 				percent = 1 - temp,
 				index = 0,
@@ -6555,7 +6676,7 @@ function Animation( elem, properties, options ) {
 			},
 			stop: function( gotoEnd ) {
 				var index = 0,
-					// if we are going to the end, we want to run all the tweens
+					// If we are going to the end, we want to run all the tweens
 					// otherwise we skip this part
 					length = gotoEnd ? animation.tweens.length : 0;
 				if ( stopped ) {
@@ -6566,8 +6687,7 @@ function Animation( elem, properties, options ) {
 					animation.tweens[ index ].run( 1 );
 				}
 
-				// resolve when we played the last frame
-				// otherwise, reject
+				// Resolve when we played the last frame; otherwise, reject
 				if ( gotoEnd ) {
 					deferred.resolveWith( elem, [ animation, gotoEnd ] );
 				} else {
@@ -6649,7 +6769,7 @@ jQuery.speed = function( speed, easing, fn ) {
 	opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
 		opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
 
-	// normalize opt.queue - true/undefined/null -> "fx"
+	// Normalize opt.queue - true/undefined/null -> "fx"
 	if ( opt.queue == null || opt.queue === true ) {
 		opt.queue = "fx";
 	}
@@ -6673,10 +6793,10 @@ jQuery.speed = function( speed, easing, fn ) {
 jQuery.fn.extend({
 	fadeTo: function( speed, to, easing, callback ) {
 
-		// show any hidden elements after setting opacity to 0
+		// Show any hidden elements after setting opacity to 0
 		return this.filter( isHidden ).css( "opacity", 0 ).show()
 
-			// animate to the value specified
+			// Animate to the value specified
 			.end().animate({ opacity: to }, speed, easing, callback );
 	},
 	animate: function( prop, speed, easing, callback ) {
@@ -6739,9 +6859,9 @@ jQuery.fn.extend({
 				}
 			}
 
-			// start the next in the queue if the last step wasn't forced
-			// timers currently will call their complete callbacks, which will dequeue
-			// but only if they were gotoEnd
+			// Start the next in the queue if the last step wasn't forced.
+			// Timers currently will call their complete callbacks, which
+			// will dequeue but only if they were gotoEnd.
 			if ( dequeue || !gotoEnd ) {
 				jQuery.dequeue( this, type );
 			}
@@ -6759,17 +6879,17 @@ jQuery.fn.extend({
 				timers = jQuery.timers,
 				length = queue ? queue.length : 0;
 
-			// enable finishing flag on private data
+			// Enable finishing flag on private data
 			data.finish = true;
 
-			// empty the queue first
+			// Empty the queue first
 			jQuery.queue( this, type, [] );
 
 			if ( hooks && hooks.stop ) {
 				hooks.stop.call( this, true );
 			}
 
-			// look for any active animations, and finish them
+			// Look for any active animations, and finish them
 			for ( index = timers.length; index--; ) {
 				if ( timers[ index ].elem === this && timers[ index ].queue === type ) {
 					timers[ index ].anim.stop( true );
@@ -6777,14 +6897,14 @@ jQuery.fn.extend({
 				}
 			}
 
-			// look for any animations in the old queue and finish them
+			// Look for any animations in the old queue and finish them
 			for ( index = 0; index < length; index++ ) {
 				if ( queue[ index ] && queue[ index ].finish ) {
 					queue[ index ].finish.call( this );
 				}
 			}
 
-			// turn off finishing flag
+			// Turn off finishing flag
 			delete data.finish;
 		});
 	}
@@ -6887,21 +7007,21 @@ jQuery.fn.delay = function( time, type ) {
 
 	input.type = "checkbox";
 
-	// Support: iOS 5.1, Android 4.x, Android 2.3
-	// Check the default checkbox/radio value ("" on old WebKit; "on" elsewhere)
+	// Support: iOS<=5.1, Android<=4.2+
+	// Default value for a checkbox should be "on"
 	support.checkOn = input.value !== "";
 
-	// Must access the parent to make an option select properly
-	// Support: IE9, IE10
+	// Support: IE<=11+
+	// Must access selectedIndex to make default options select
 	support.optSelected = opt.selected;
 
-	// Make sure that the options inside disabled selects aren't marked as disabled
-	// (WebKit marks them as disabled)
+	// Support: Android<=2.3
+	// Options inside disabled selects are incorrectly marked as disabled
 	select.disabled = true;
 	support.optDisabled = !opt.disabled;
 
-	// Check if an input maintains its value after becoming a radio
-	// Support: IE9, IE10
+	// Support: IE<=11+
+	// An input loses its value after becoming a radio
 	input = document.createElement( "input" );
 	input.value = "t";
 	input.type = "radio";
@@ -6998,8 +7118,6 @@ jQuery.extend({
 			set: function( elem, value ) {
 				if ( !support.radioValue && value === "radio" &&
 					jQuery.nodeName( elem, "input" ) ) {
-					// Setting the type on a radio button after the value resets the value in IE6-9
-					// Reset value to default in case type is set after value during creation
 					var val = elem.value;
 					elem.setAttribute( "type", value );
 					if ( val ) {
@@ -7069,7 +7187,7 @@ jQuery.extend({
 		var ret, hooks, notxml,
 			nType = elem.nodeType;
 
-		// don't get/set properties on text, comment and attribute nodes
+		// Don't get/set properties on text, comment and attribute nodes
 		if ( !elem || nType === 3 || nType === 8 || nType === 2 ) {
 			return;
 		}
@@ -7105,8 +7223,6 @@ jQuery.extend({
 	}
 });
 
-// Support: IE9+
-// Selectedness for an option in an optgroup can be inaccurate
 if ( !support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
@@ -7214,7 +7330,7 @@ jQuery.fn.extend({
 						}
 					}
 
-					// only assign if different to avoid unneeded rendering.
+					// Only assign if different to avoid unneeded rendering.
 					finalValue = value ? jQuery.trim( cur ) : "";
 					if ( elem.className !== finalValue ) {
 						elem.className = finalValue;
@@ -7241,14 +7357,14 @@ jQuery.fn.extend({
 
 		return this.each(function() {
 			if ( type === "string" ) {
-				// toggle individual class names
+				// Toggle individual class names
 				var className,
 					i = 0,
 					self = jQuery( this ),
 					classNames = value.match( rnotwhite ) || [];
 
 				while ( (className = classNames[ i++ ]) ) {
-					// check each className given, space separated list
+					// Check each className given, space separated list
 					if ( self.hasClass( className ) ) {
 						self.removeClass( className );
 					} else {
@@ -7263,7 +7379,7 @@ jQuery.fn.extend({
 					data_priv.set( this, "__className__", this.className );
 				}
 
-				// If the element has a class name or if we're passed "false",
+				// If the element has a class name or if we're passed `false`,
 				// then remove the whole classname (if there was one, the above saved it).
 				// Otherwise bring back whatever was previously saved (if anything),
 				// falling back to the empty string if nothing was stored.
@@ -7307,9 +7423,9 @@ jQuery.fn.extend({
 				ret = elem.value;
 
 				return typeof ret === "string" ?
-					// handle most common string cases
+					// Handle most common string cases
 					ret.replace(rreturn, "") :
-					// handle cases where value is null/undef or number
+					// Handle cases where value is null/undef or number
 					ret == null ? "" : ret;
 			}
 
@@ -7417,7 +7533,7 @@ jQuery.extend({
 					}
 				}
 
-				// force browsers to behave consistently when non-matching value is set
+				// Force browsers to behave consistently when non-matching value is set
 				if ( !optionSet ) {
 					elem.selectedIndex = -1;
 				}
@@ -7438,8 +7554,6 @@ jQuery.each([ "radio", "checkbox" ], function() {
 	};
 	if ( !support.checkOn ) {
 		jQuery.valHooks[ this ].get = function( elem ) {
-			// Support: Webkit
-			// "" is returned instead of "on" if a value isn't specified
 			return elem.getAttribute("value") === null ? "on" : elem.value;
 		};
 	}
@@ -7521,10 +7635,6 @@ jQuery.parseXML = function( data ) {
 
 
 var
-	// Document location
-	ajaxLocParts,
-	ajaxLocation,
-
 	rhash = /#.*$/,
 	rts = /([?&])_=[^&]*/,
 	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
@@ -7553,22 +7663,13 @@ var
 	transports = {},
 
 	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
-	allTypes = "*/".concat("*");
+	allTypes = "*/".concat( "*" ),
 
-// #8138, IE may throw an exception when accessing
-// a field from window.location if document.domain has been set
-try {
-	ajaxLocation = location.href;
-} catch( e ) {
-	// Use the href attribute of an A element
-	// since IE will modify it given document.location
-	ajaxLocation = document.createElement( "a" );
-	ajaxLocation.href = "";
-	ajaxLocation = ajaxLocation.href;
-}
+	// Document location
+	ajaxLocation = window.location.href,
 
-// Segment location into parts
-ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
+	// Segment location into parts
+	ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
 
 // Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
 function addToPrefiltersOrTransports( structure ) {
@@ -8047,7 +8148,8 @@ jQuery.extend({
 		}
 
 		// We can fire global events as of now if asked to
-		fireGlobals = s.global;
+		// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (#15118)
+		fireGlobals = jQuery.event && s.global;
 
 		// Watch for a new set of requests
 		if ( fireGlobals && jQuery.active++ === 0 ) {
@@ -8120,7 +8222,7 @@ jQuery.extend({
 			return jqXHR.abort();
 		}
 
-		// aborting is no longer a cancellation
+		// Aborting is no longer a cancellation
 		strAbort = "abort";
 
 		// Install callbacks on deferreds
@@ -8232,8 +8334,7 @@ jQuery.extend({
 					isSuccess = !error;
 				}
 			} else {
-				// We extract error from statusText
-				// then normalize statusText and status for non-aborts
+				// Extract error from statusText and normalize for non-aborts
 				error = statusText;
 				if ( status || !statusText ) {
 					statusText = "error";
@@ -8289,7 +8390,7 @@ jQuery.extend({
 
 jQuery.each( [ "get", "post" ], function( i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
-		// shift arguments if data argument was omitted
+		// Shift arguments if data argument was omitted
 		if ( jQuery.isFunction( data ) ) {
 			type = type || callback;
 			callback = data;
@@ -8303,13 +8404,6 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
 			data: data,
 			success: callback
 		});
-	};
-});
-
-// Attach a bunch of functions for handling common AJAX events
-jQuery.each( [ "ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend" ], function( i, type ) {
-	jQuery.fn[ type ] = function( fn ) {
-		return this.on( type, fn );
 	};
 });
 
@@ -8530,8 +8624,9 @@ var xhrId = 0,
 
 // Support: IE9
 // Open requests must be manually aborted on unload (#5280)
-if ( window.ActiveXObject ) {
-	jQuery( window ).on( "unload", function() {
+// See https://support.microsoft.com/kb/2856746 for more info
+if ( window.attachEvent ) {
+	window.attachEvent( "onunload", function() {
 		for ( var key in xhrCallbacks ) {
 			xhrCallbacks[ key ]();
 		}
@@ -8884,6 +8979,16 @@ jQuery.fn.load = function( url, params, callback ) {
 
 
 
+// Attach a bunch of functions for handling common AJAX events
+jQuery.each( [ "ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend" ], function( i, type ) {
+	jQuery.fn[ type ] = function( fn ) {
+		return this.on( type, fn );
+	};
+});
+
+
+
+
 jQuery.expr.filters.animated = function( elem ) {
 	return jQuery.grep(jQuery.timers, function( fn ) {
 		return elem === fn.elem;
@@ -8920,7 +9025,8 @@ jQuery.offset = {
 		calculatePosition = ( position === "absolute" || position === "fixed" ) &&
 			( curCSSTop + curCSSLeft ).indexOf("auto") > -1;
 
-		// Need to be able to calculate position if either top or left is auto and position is either absolute or fixed
+		// Need to be able to calculate position if either
+		// top or left is auto and position is either absolute or fixed
 		if ( calculatePosition ) {
 			curPosition = curElem.position();
 			curTop = curPosition.top;
@@ -8977,8 +9083,8 @@ jQuery.fn.extend({
 			return box;
 		}
 
+		// Support: BlackBerry 5, iOS 3 (original iPhone)
 		// If we don't have gBCR, just use 0,0 rather than error
-		// BlackBerry 5, iOS 3 (original iPhone)
 		if ( typeof elem.getBoundingClientRect !== strundefined ) {
 			box = elem.getBoundingClientRect();
 		}
@@ -9000,7 +9106,7 @@ jQuery.fn.extend({
 
 		// Fixed elements are offset from window (parentOffset = {top:0, left: 0}, because it is its only offset parent
 		if ( jQuery.css( elem, "position" ) === "fixed" ) {
-			// We assume that getBoundingClientRect is available when computed position is fixed
+			// Assume getBoundingClientRect is there when computed position is fixed
 			offset = elem.getBoundingClientRect();
 
 		} else {
@@ -9063,16 +9169,18 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 	};
 });
 
+// Support: Safari<7+, Chrome<37+
 // Add the top/left cssHooks using jQuery.fn.position
 // Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
-// getComputedStyle returns percent when specified for top/left/bottom/right
-// rather than make the css module depend on the offset module, we just check for it here
+// Blink bug: https://code.google.com/p/chromium/issues/detail?id=229280
+// getComputedStyle returns percent when specified for top/left/bottom/right;
+// rather than make the css module depend on the offset module, just check for it here
 jQuery.each( [ "top", "left" ], function( i, prop ) {
 	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
 		function( elem, computed ) {
 			if ( computed ) {
 				computed = curCSS( elem, prop );
-				// if curCSS returns percentage, fallback to offset
+				// If curCSS returns percentage, fallback to offset
 				return rnumnonpx.test( computed ) ?
 					jQuery( elem ).position()[ prop ] + "px" :
 					computed;
@@ -9085,7 +9193,7 @@ jQuery.each( [ "top", "left" ], function( i, prop ) {
 // Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
 jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 	jQuery.each( { padding: "inner" + name, content: type, "": "outer" + name }, function( defaultExtra, funcName ) {
-		// margin is only for outerHeight, outerWidth
+		// Margin is only for outerHeight, outerWidth
 		jQuery.fn[ funcName ] = function( margin, value ) {
 			var chainable = arguments.length && ( defaultExtra || typeof margin !== "boolean" ),
 				extra = defaultExtra || ( margin === true || value === true ? "margin" : "border" );
@@ -9176,8 +9284,8 @@ jQuery.noConflict = function( deep ) {
 	return jQuery;
 };
 
-// Expose jQuery and $ identifiers, even in
-// AMD (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
+// Expose jQuery and $ identifiers, even in AMD
+// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if ( typeof noGlobal === strundefined ) {
 	window.jQuery = window.$ = jQuery;
@@ -9190,7 +9298,7 @@ return jQuery;
 
 }));
 
-},{}],2:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/client.js":[function(require,module,exports){
 /*-------------------------------------------------------------------------------------------------------------------*\
 |  Copyright (C) 2015 PayPal                                                                                          |
 |                                                                                                                     |
@@ -9266,8 +9374,8 @@ exports.boot = function boot(options, callback) {
   return callback && callback(props);
 };
 
-},{"./config":3,"react":197,"react-router":28}],3:[function(require,module,exports){
-module.exports={
+},{"./config":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/config.json","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react-router":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/index.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/config.json":[function(require,module,exports){
+module.exports=module.exports={
   "docType": "<!DOCTYPE html>",
   "client": {
     "markupId": "react-engine-props",
@@ -9275,7 +9383,7 @@ module.exports={
   }
 }
 
-},{}],4:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Cancellation.js":[function(require,module,exports){
 /**
  * Represents a cancellation caused by navigating away
  * before the previous transition has fully resolved.
@@ -9285,7 +9393,7 @@ module.exports={
 function Cancellation() {}
 
 module.exports = Cancellation;
-},{}],5:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js":[function(require,module,exports){
 'use strict';
 
 var invariant = require('react/lib/invariant');
@@ -9316,7 +9424,7 @@ var History = {
 };
 
 module.exports = History;
-},{"react/lib/ExecutionEnvironment":62,"react/lib/invariant":177}],6:[function(require,module,exports){
+},{"react/lib/ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Match.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -9392,7 +9500,7 @@ var Match = (function () {
 })();
 
 module.exports = Match;
-},{"./PathUtils":8}],7:[function(require,module,exports){
+},{"./PathUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PathUtils.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Navigation.js":[function(require,module,exports){
 'use strict';
 
 var PropTypes = require('./PropTypes');
@@ -9463,7 +9571,7 @@ var Navigation = {
 };
 
 module.exports = Navigation;
-},{"./PropTypes":9}],8:[function(require,module,exports){
+},{"./PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PathUtils.js":[function(require,module,exports){
 'use strict';
 
 var invariant = require('react/lib/invariant');
@@ -9617,7 +9725,7 @@ var PathUtils = {
 };
 
 module.exports = PathUtils;
-},{"object-assign":37,"qs":38,"react/lib/invariant":177}],9:[function(require,module,exports){
+},{"object-assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/object-assign/index.js","qs":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/index.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js":[function(require,module,exports){
 'use strict';
 
 var assign = require('react/lib/Object.assign');
@@ -9649,7 +9757,7 @@ var PropTypes = assign({}, ReactPropTypes, {
 });
 
 module.exports = PropTypes;
-},{"./Route":11,"react":197,"react/lib/Object.assign":68}],10:[function(require,module,exports){
+},{"./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Route.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react/lib/Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Redirect.js":[function(require,module,exports){
 /**
  * Encapsulates a redirect to the given route.
  */
@@ -9662,7 +9770,7 @@ function Redirect(to, params, query) {
 }
 
 module.exports = Redirect;
-},{}],11:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Route.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -9863,7 +9971,7 @@ var Route = (function () {
 })();
 
 module.exports = Route;
-},{"./PathUtils":8,"react/lib/Object.assign":68,"react/lib/invariant":177,"react/lib/warning":196}],12:[function(require,module,exports){
+},{"./PathUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PathUtils.js","react/lib/Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","react/lib/warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/ScrollHistory.js":[function(require,module,exports){
 'use strict';
 
 var invariant = require('react/lib/invariant');
@@ -9939,7 +10047,7 @@ var ScrollHistory = {
 };
 
 module.exports = ScrollHistory;
-},{"./getWindowScrollPosition":27,"react/lib/ExecutionEnvironment":62,"react/lib/invariant":177}],13:[function(require,module,exports){
+},{"./getWindowScrollPosition":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/getWindowScrollPosition.js","react/lib/ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/State.js":[function(require,module,exports){
 'use strict';
 
 var PropTypes = require('./PropTypes');
@@ -10014,7 +10122,7 @@ var State = {
 };
 
 module.exports = State;
-},{"./PropTypes":9}],14:[function(require,module,exports){
+},{"./PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Transition.js":[function(require,module,exports){
 /* jshint -W058 */
 
 'use strict';
@@ -10090,7 +10198,7 @@ Transition.to = function (transition, routes, params, query, callback) {
 };
 
 module.exports = Transition;
-},{"./Cancellation":4,"./Redirect":10}],15:[function(require,module,exports){
+},{"./Cancellation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Cancellation.js","./Redirect":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Redirect.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/actions/LocationActions.js":[function(require,module,exports){
 /**
  * Actions that modify the URL.
  */
@@ -10116,7 +10224,7 @@ var LocationActions = {
 };
 
 module.exports = LocationActions;
-},{}],16:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/behaviors/ImitateBrowserBehavior.js":[function(require,module,exports){
 'use strict';
 
 var LocationActions = require('../actions/LocationActions');
@@ -10146,7 +10254,7 @@ var ImitateBrowserBehavior = {
 };
 
 module.exports = ImitateBrowserBehavior;
-},{"../actions/LocationActions":15}],17:[function(require,module,exports){
+},{"../actions/LocationActions":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/actions/LocationActions.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/behaviors/ScrollToTopBehavior.js":[function(require,module,exports){
 /**
  * A scroll behavior that always scrolls to the top of the page
  * after a transition.
@@ -10162,7 +10270,7 @@ var ScrollToTopBehavior = {
 };
 
 module.exports = ScrollToTopBehavior;
-},{}],18:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/ContextWrapper.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10201,7 +10309,7 @@ var ContextWrapper = (function (_React$Component) {
 })(React.Component);
 
 module.exports = ContextWrapper;
-},{"react":197}],19:[function(require,module,exports){
+},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/DefaultRoute.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10249,7 +10357,7 @@ DefaultRoute.defaultProps = {
 };
 
 module.exports = DefaultRoute;
-},{"../PropTypes":9,"./Route":23,"./RouteHandler":24}],20:[function(require,module,exports){
+},{"../PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Route.js","./RouteHandler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/RouteHandler.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Link.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10385,7 +10493,7 @@ Link.defaultProps = {
 };
 
 module.exports = Link;
-},{"../PropTypes":9,"react":197,"react/lib/Object.assign":68}],21:[function(require,module,exports){
+},{"../PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react/lib/Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/NotFoundRoute.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10434,7 +10542,7 @@ NotFoundRoute.defaultProps = {
 };
 
 module.exports = NotFoundRoute;
-},{"../PropTypes":9,"./Route":23,"./RouteHandler":24}],22:[function(require,module,exports){
+},{"../PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Route.js","./RouteHandler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/RouteHandler.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Redirect.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10478,7 +10586,7 @@ Redirect.propTypes = {
 Redirect.defaultProps = {};
 
 module.exports = Redirect;
-},{"../PropTypes":9,"./Route":23}],23:[function(require,module,exports){
+},{"../PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Route.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Route.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10570,7 +10678,7 @@ Route.defaultProps = {
 };
 
 module.exports = Route;
-},{"../PropTypes":9,"./RouteHandler":24,"react":197,"react/lib/invariant":177}],24:[function(require,module,exports){
+},{"../PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","./RouteHandler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/RouteHandler.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/RouteHandler.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -10679,7 +10787,7 @@ RouteHandler.childContextTypes = {
 };
 
 module.exports = RouteHandler;
-},{"../PropTypes":9,"./ContextWrapper":18,"react":197,"react/lib/Object.assign":68}],25:[function(require,module,exports){
+},{"../PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","./ContextWrapper":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/ContextWrapper.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react/lib/Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/createRouter.js":[function(require,module,exports){
 (function (process){
 /* jshint -W058 */
 'use strict';
@@ -11195,8 +11303,8 @@ function createRouter(options) {
 }
 
 module.exports = createRouter;
-}).call(this,require("q+64fw"))
-},{"./Cancellation":4,"./History":5,"./Match":6,"./PathUtils":8,"./PropTypes":9,"./Redirect":10,"./Route":11,"./ScrollHistory":12,"./Transition":14,"./actions/LocationActions":15,"./behaviors/ImitateBrowserBehavior":16,"./createRoutesFromReactChildren":26,"./isReactChildren":29,"./locations/HashLocation":30,"./locations/HistoryLocation":31,"./locations/RefreshLocation":32,"./locations/StaticLocation":33,"./supportsHistory":36,"q+64fw":203,"react":197,"react/lib/ExecutionEnvironment":62,"react/lib/invariant":177,"react/lib/warning":196}],26:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Cancellation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Cancellation.js","./History":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js","./Match":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Match.js","./PathUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PathUtils.js","./PropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/PropTypes.js","./Redirect":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Redirect.js","./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Route.js","./ScrollHistory":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/ScrollHistory.js","./Transition":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Transition.js","./actions/LocationActions":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/actions/LocationActions.js","./behaviors/ImitateBrowserBehavior":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/behaviors/ImitateBrowserBehavior.js","./createRoutesFromReactChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/createRoutesFromReactChildren.js","./isReactChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/isReactChildren.js","./locations/HashLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HashLocation.js","./locations/HistoryLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HistoryLocation.js","./locations/RefreshLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/RefreshLocation.js","./locations/StaticLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/StaticLocation.js","./supportsHistory":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/supportsHistory.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react/lib/ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","react/lib/warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/createRoutesFromReactChildren.js":[function(require,module,exports){
 /* jshint -W084 */
 'use strict';
 
@@ -11278,7 +11386,7 @@ function createRoutesFromReactChildren(children) {
 }
 
 module.exports = createRoutesFromReactChildren;
-},{"./Route":11,"./components/DefaultRoute":19,"./components/NotFoundRoute":21,"./components/Redirect":22,"react":197,"react/lib/Object.assign":68,"react/lib/warning":196}],27:[function(require,module,exports){
+},{"./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Route.js","./components/DefaultRoute":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/DefaultRoute.js","./components/NotFoundRoute":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/NotFoundRoute.js","./components/Redirect":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Redirect.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react/lib/Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","react/lib/warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/getWindowScrollPosition.js":[function(require,module,exports){
 'use strict';
 
 var invariant = require('react/lib/invariant');
@@ -11297,7 +11405,7 @@ function getWindowScrollPosition() {
 }
 
 module.exports = getWindowScrollPosition;
-},{"react/lib/ExecutionEnvironment":62,"react/lib/invariant":177}],28:[function(require,module,exports){
+},{"react/lib/ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/index.js":[function(require,module,exports){
 'use strict';
 
 exports.DefaultRoute = require('./components/DefaultRoute');
@@ -11329,7 +11437,7 @@ exports.createRoutesFromReactChildren = require('./createRoutesFromReactChildren
 
 exports.create = require('./createRouter');
 exports.run = require('./runRouter');
-},{"./History":5,"./Navigation":7,"./Route":11,"./State":13,"./behaviors/ImitateBrowserBehavior":16,"./behaviors/ScrollToTopBehavior":17,"./components/DefaultRoute":19,"./components/Link":20,"./components/NotFoundRoute":21,"./components/Redirect":22,"./components/Route":23,"./components/RouteHandler":24,"./createRouter":25,"./createRoutesFromReactChildren":26,"./locations/HashLocation":30,"./locations/HistoryLocation":31,"./locations/RefreshLocation":32,"./locations/StaticLocation":33,"./locations/TestLocation":34,"./runRouter":35}],29:[function(require,module,exports){
+},{"./History":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js","./Navigation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Navigation.js","./Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/Route.js","./State":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/State.js","./behaviors/ImitateBrowserBehavior":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/behaviors/ImitateBrowserBehavior.js","./behaviors/ScrollToTopBehavior":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/behaviors/ScrollToTopBehavior.js","./components/DefaultRoute":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/DefaultRoute.js","./components/Link":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Link.js","./components/NotFoundRoute":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/NotFoundRoute.js","./components/Redirect":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Redirect.js","./components/Route":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/Route.js","./components/RouteHandler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/components/RouteHandler.js","./createRouter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/createRouter.js","./createRoutesFromReactChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/createRoutesFromReactChildren.js","./locations/HashLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HashLocation.js","./locations/HistoryLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HistoryLocation.js","./locations/RefreshLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/RefreshLocation.js","./locations/StaticLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/StaticLocation.js","./locations/TestLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/TestLocation.js","./runRouter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/runRouter.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/isReactChildren.js":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -11343,7 +11451,7 @@ function isReactChildren(object) {
 }
 
 module.exports = isReactChildren;
-},{"react":197}],30:[function(require,module,exports){
+},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HashLocation.js":[function(require,module,exports){
 'use strict';
 
 var LocationActions = require('../actions/LocationActions');
@@ -11455,7 +11563,7 @@ var HashLocation = {
 };
 
 module.exports = HashLocation;
-},{"../History":5,"../actions/LocationActions":15}],31:[function(require,module,exports){
+},{"../History":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js","../actions/LocationActions":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/actions/LocationActions.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HistoryLocation.js":[function(require,module,exports){
 'use strict';
 
 var LocationActions = require('../actions/LocationActions');
@@ -11542,7 +11650,7 @@ var HistoryLocation = {
 };
 
 module.exports = HistoryLocation;
-},{"../History":5,"../actions/LocationActions":15}],32:[function(require,module,exports){
+},{"../History":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js","../actions/LocationActions":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/actions/LocationActions.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/RefreshLocation.js":[function(require,module,exports){
 'use strict';
 
 var HistoryLocation = require('./HistoryLocation');
@@ -11574,7 +11682,7 @@ var RefreshLocation = {
 };
 
 module.exports = RefreshLocation;
-},{"../History":5,"./HistoryLocation":31}],33:[function(require,module,exports){
+},{"../History":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js","./HistoryLocation":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/HistoryLocation.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/StaticLocation.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -11624,7 +11732,7 @@ StaticLocation.prototype.replace = throwCannotModify;
 StaticLocation.prototype.pop = throwCannotModify;
 
 module.exports = StaticLocation;
-},{"react/lib/invariant":177}],34:[function(require,module,exports){
+},{"react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/locations/TestLocation.js":[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -11719,7 +11827,7 @@ var TestLocation = (function () {
 })();
 
 module.exports = TestLocation;
-},{"../History":5,"../actions/LocationActions":15,"react/lib/invariant":177}],35:[function(require,module,exports){
+},{"../History":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/History.js","../actions/LocationActions":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/actions/LocationActions.js","react/lib/invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/runRouter.js":[function(require,module,exports){
 'use strict';
 
 var createRouter = require('./createRouter');
@@ -11770,7 +11878,7 @@ function runRouter(routes, location, callback) {
 }
 
 module.exports = runRouter;
-},{"./createRouter":25}],36:[function(require,module,exports){
+},{"./createRouter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/createRouter.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/supportsHistory.js":[function(require,module,exports){
 'use strict';
 
 function supportsHistory() {
@@ -11787,7 +11895,7 @@ function supportsHistory() {
 }
 
 module.exports = supportsHistory;
-},{}],37:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/object-assign/index.js":[function(require,module,exports){
 'use strict';
 
 function ToObject(val) {
@@ -11815,10 +11923,10 @@ module.exports = Object.assign || function (target, source) {
 	return to;
 };
 
-},{}],38:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/index.js":[function(require,module,exports){
 module.exports = require('./lib/');
 
-},{"./lib/":39}],39:[function(require,module,exports){
+},{"./lib/":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/index.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/index.js":[function(require,module,exports){
 // Load modules
 
 var Stringify = require('./stringify');
@@ -11835,7 +11943,7 @@ module.exports = {
     parse: Parse
 };
 
-},{"./parse":40,"./stringify":41}],40:[function(require,module,exports){
+},{"./parse":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/parse.js","./stringify":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/stringify.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/parse.js":[function(require,module,exports){
 // Load modules
 
 var Utils = require('./utils');
@@ -11998,7 +12106,7 @@ module.exports = function (str, options) {
     return Utils.compact(obj);
 };
 
-},{"./utils":42}],41:[function(require,module,exports){
+},{"./utils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/utils.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/stringify.js":[function(require,module,exports){
 // Load modules
 
 var Utils = require('./utils');
@@ -12097,7 +12205,7 @@ module.exports = function (obj, options) {
     return keys.join(delimiter);
 };
 
-},{"./utils":42}],42:[function(require,module,exports){
+},{"./utils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/utils.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/node_modules/qs/lib/utils.js":[function(require,module,exports){
 // Load modules
 
 
@@ -12231,7 +12339,7 @@ exports.isBuffer = function (obj) {
         obj.constructor.isBuffer(obj));
 };
 
-},{}],43:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12258,7 +12366,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":161}],44:[function(require,module,exports){
+},{"./focusNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/focusNode.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/BeforeInputEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -12753,7 +12861,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":56,"./EventPropagators":61,"./ExecutionEnvironment":62,"./FallbackCompositionState":63,"./SyntheticCompositionEvent":135,"./SyntheticInputEvent":139,"./keyOf":183}],45:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./FallbackCompositionState":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/FallbackCompositionState.js","./SyntheticCompositionEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticCompositionEvent.js","./SyntheticInputEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticInputEvent.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CSSProperty.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12878,7 +12986,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],46:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CSSPropertyOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13059,8 +13167,8 @@ var CSSPropertyOperations = {
 
 module.exports = CSSPropertyOperations;
 
-}).call(this,require("q+64fw"))
-},{"./CSSProperty":45,"./ExecutionEnvironment":62,"./camelizeStyleName":150,"./dangerousStyleValue":155,"./hyphenateStyleName":175,"./memoizeStringOnly":185,"./warning":196,"q+64fw":203}],47:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./CSSProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CSSProperty.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./camelizeStyleName":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/camelizeStyleName.js","./dangerousStyleValue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/dangerousStyleValue.js","./hyphenateStyleName":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/hyphenateStyleName.js","./memoizeStringOnly":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/memoizeStringOnly.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CallbackQueue.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13159,8 +13267,8 @@ PooledClass.addPoolingTo(CallbackQueue);
 
 module.exports = CallbackQueue;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./PooledClass":69,"./invariant":177,"q+64fw":203}],48:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ChangeEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13542,7 +13650,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":56,"./EventPluginHub":58,"./EventPropagators":61,"./ExecutionEnvironment":62,"./ReactUpdates":129,"./SyntheticEvent":137,"./isEventSupported":178,"./isTextInputElement":180,"./keyOf":183}],49:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginHub.js","./EventPropagators":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js","./isEventSupported":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isEventSupported.js","./isTextInputElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ClientReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13567,7 +13675,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],50:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMChildrenOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13704,8 +13812,8 @@ var DOMChildrenOperations = {
 
 module.exports = DOMChildrenOperations;
 
-}).call(this,require("q+64fw"))
-},{"./Danger":53,"./ReactMultiChildUpdateTypes":114,"./invariant":177,"./setTextContent":191,"q+64fw":203}],51:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Danger":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Danger.js","./ReactMultiChildUpdateTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./setTextContent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/setTextContent.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14003,8 +14111,8 @@ var DOMProperty = {
 
 module.exports = DOMProperty;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],52:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMPropertyOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14195,8 +14303,8 @@ var DOMPropertyOperations = {
 
 module.exports = DOMPropertyOperations;
 
-}).call(this,require("q+64fw"))
-},{"./DOMProperty":51,"./quoteAttributeValueForBrowser":189,"./warning":196,"q+64fw":203}],53:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js","./quoteAttributeValueForBrowser":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/quoteAttributeValueForBrowser.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Danger.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14382,8 +14490,8 @@ var Danger = {
 
 module.exports = Danger;
 
-}).call(this,require("q+64fw"))
-},{"./ExecutionEnvironment":62,"./createNodesFromMarkup":154,"./emptyFunction":156,"./getMarkupWrap":169,"./invariant":177,"q+64fw":203}],54:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./createNodesFromMarkup":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/createNodesFromMarkup.js","./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js","./getMarkupWrap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DefaultEventPluginOrder.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14422,7 +14530,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":183}],55:[function(require,module,exports){
+},{"./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EnterLeaveEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14562,7 +14670,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":56,"./EventPropagators":61,"./ReactMount":112,"./SyntheticMouseEvent":141,"./keyOf":183}],56:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPropagators.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./SyntheticMouseEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticMouseEvent.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14634,7 +14742,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":182}],57:[function(require,module,exports){
+},{"./keyMirror":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyMirror.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventListener.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14723,8 +14831,8 @@ var EventListener = {
 
 module.exports = EventListener;
 
-}).call(this,require("q+64fw"))
-},{"./emptyFunction":156,"q+64fw":203}],58:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginHub.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15001,8 +15109,8 @@ var EventPluginHub = {
 
 module.exports = EventPluginHub;
 
-}).call(this,require("q+64fw"))
-},{"./EventPluginRegistry":59,"./EventPluginUtils":60,"./accumulateInto":147,"./forEachAccumulated":162,"./invariant":177,"q+64fw":203}],59:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./EventPluginRegistry":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginRegistry.js","./EventPluginUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginUtils.js","./accumulateInto":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginRegistry.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15281,8 +15389,8 @@ var EventPluginRegistry = {
 
 module.exports = EventPluginRegistry;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],60:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginUtils.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15502,8 +15610,8 @@ var EventPluginUtils = {
 
 module.exports = EventPluginUtils;
 
-}).call(this,require("q+64fw"))
-},{"./EventConstants":56,"./invariant":177,"q+64fw":203}],61:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPropagators.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15644,8 +15752,8 @@ var EventPropagators = {
 
 module.exports = EventPropagators;
 
-}).call(this,require("q+64fw"))
-},{"./EventConstants":56,"./EventPluginHub":58,"./accumulateInto":147,"./forEachAccumulated":162,"q+64fw":203}],62:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginHub.js","./accumulateInto":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/forEachAccumulated.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15689,7 +15797,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],63:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/FallbackCompositionState.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15780,7 +15888,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
 
-},{"./Object.assign":68,"./PooledClass":69,"./getTextContentAccessor":172}],64:[function(require,module,exports){
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./getTextContentAccessor":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/HTMLDOMPropertyConfig.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15991,7 +16099,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":51,"./ExecutionEnvironment":62}],65:[function(require,module,exports){
+},{"./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LinkedValueUtils.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16146,8 +16254,8 @@ var LinkedValueUtils = {
 
 module.exports = LinkedValueUtils;
 
-}).call(this,require("q+64fw"))
-},{"./ReactPropTypes":120,"./invariant":177,"q+64fw":203}],66:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactPropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypes.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LocalEventTrapMixin.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -16203,8 +16311,8 @@ var LocalEventTrapMixin = {
 
 module.exports = LocalEventTrapMixin;
 
-}).call(this,require("q+64fw"))
-},{"./ReactBrowserEventEmitter":72,"./accumulateInto":147,"./forEachAccumulated":162,"./invariant":177,"q+64fw":203}],67:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactBrowserEventEmitter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js","./accumulateInto":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/MobileSafariClickEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16262,7 +16370,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":56,"./emptyFunction":156}],68:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -16311,7 +16419,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],69:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16426,8 +16534,8 @@ var PooledClass = {
 
 module.exports = PooledClass;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],70:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/React.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16578,8 +16686,8 @@ React.version = '0.13.3';
 
 module.exports = React;
 
-}).call(this,require("q+64fw"))
-},{"./EventPluginUtils":60,"./ExecutionEnvironment":62,"./Object.assign":68,"./ReactChildren":74,"./ReactClass":75,"./ReactComponent":76,"./ReactContext":80,"./ReactCurrentOwner":81,"./ReactDOM":82,"./ReactDOMTextComponent":93,"./ReactDefaultInjection":96,"./ReactElement":99,"./ReactElementValidator":100,"./ReactInstanceHandles":108,"./ReactMount":112,"./ReactPerf":117,"./ReactPropTypes":120,"./ReactReconciler":123,"./ReactServerRendering":126,"./findDOMNode":159,"./onlyChild":186,"q+64fw":203}],71:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./EventPluginUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginUtils.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactChildren.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponent.js","./ReactContext":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactDOM":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOM.js","./ReactDOMTextComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDefaultInjection":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultInjection.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceHandles":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./ReactPropTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypes.js","./ReactReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js","./ReactServerRendering":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactServerRendering.js","./findDOMNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/findDOMNode.js","./onlyChild":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/onlyChild.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16610,7 +16718,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 
-},{"./findDOMNode":159}],72:[function(require,module,exports){
+},{"./findDOMNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/findDOMNode.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16963,7 +17071,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":56,"./EventPluginHub":58,"./EventPluginRegistry":59,"./Object.assign":68,"./ReactEventEmitterMixin":103,"./ViewportMetrics":146,"./isEventSupported":178}],73:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginHub.js","./EventPluginRegistry":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginRegistry.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactEventEmitterMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEventEmitterMixin.js","./ViewportMetrics":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ViewportMetrics.js","./isEventSupported":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isEventSupported.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactChildReconciler.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -17090,7 +17198,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 
-},{"./ReactReconciler":123,"./flattenChildren":160,"./instantiateReactComponent":176,"./shouldUpdateReactComponent":193}],74:[function(require,module,exports){
+},{"./ReactReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js","./flattenChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/flattenChildren.js","./instantiateReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/instantiateReactComponent.js","./shouldUpdateReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/shouldUpdateReactComponent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17242,8 +17350,8 @@ var ReactChildren = {
 
 module.exports = ReactChildren;
 
-}).call(this,require("q+64fw"))
-},{"./PooledClass":69,"./ReactFragment":105,"./traverseAllChildren":195,"./warning":196,"q+64fw":203}],75:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./ReactFragment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactFragment.js","./traverseAllChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18188,8 +18296,8 @@ var ReactClass = {
 
 module.exports = ReactClass;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./ReactComponent":76,"./ReactCurrentOwner":81,"./ReactElement":99,"./ReactErrorUtils":102,"./ReactInstanceMap":109,"./ReactLifeCycle":110,"./ReactPropTypeLocationNames":118,"./ReactPropTypeLocations":119,"./ReactUpdateQueue":128,"./invariant":177,"./keyMirror":182,"./keyOf":183,"./warning":196,"q+64fw":203}],76:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponent.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactErrorUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactErrorUtils.js","./ReactInstanceMap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactLifeCycle.js","./ReactPropTypeLocationNames":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocations.js","./ReactUpdateQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./keyMirror":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyMirror.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18342,8 +18450,8 @@ if ("production" !== process.env.NODE_ENV) {
 
 module.exports = ReactComponent;
 
-}).call(this,require("q+64fw"))
-},{"./ReactUpdateQueue":128,"./invariant":177,"./warning":196,"q+64fw":203}],77:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactUpdateQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentBrowserEnvironment.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18390,7 +18498,7 @@ var ReactComponentBrowserEnvironment = {
 
 module.exports = ReactComponentBrowserEnvironment;
 
-},{"./ReactDOMIDOperations":86,"./ReactMount":112}],78:[function(require,module,exports){
+},{"./ReactDOMIDOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMIDOperations.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentEnvironment.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -18450,8 +18558,8 @@ var ReactComponentEnvironment = {
 
 module.exports = ReactComponentEnvironment;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],79:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCompositeComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19363,8 +19471,8 @@ var ReactCompositeComponent = {
 
 module.exports = ReactCompositeComponent;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./ReactComponentEnvironment":78,"./ReactContext":80,"./ReactCurrentOwner":81,"./ReactElement":99,"./ReactElementValidator":100,"./ReactInstanceMap":109,"./ReactLifeCycle":110,"./ReactNativeComponent":115,"./ReactPerf":117,"./ReactPropTypeLocationNames":118,"./ReactPropTypeLocations":119,"./ReactReconciler":123,"./ReactUpdates":129,"./emptyObject":157,"./invariant":177,"./shouldUpdateReactComponent":193,"./warning":196,"q+64fw":203}],80:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactComponentEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentEnvironment.js","./ReactContext":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceMap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactLifeCycle.js","./ReactNativeComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./ReactPropTypeLocationNames":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocations.js","./ReactReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./emptyObject":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyObject.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./shouldUpdateReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactContext.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19441,8 +19549,8 @@ var ReactContext = {
 
 module.exports = ReactContext;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./emptyObject":157,"./warning":196,"q+64fw":203}],81:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./emptyObject":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyObject.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19476,7 +19584,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],82:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOM.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19654,8 +19762,8 @@ var ReactDOM = mapObject({
 
 module.exports = ReactDOM;
 
-}).call(this,require("q+64fw"))
-},{"./ReactElement":99,"./ReactElementValidator":100,"./mapObject":184,"q+64fw":203}],83:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElementValidator.js","./mapObject":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/mapObject.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMButton.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19719,7 +19827,7 @@ var ReactDOMButton = ReactClass.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":43,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99,"./keyMirror":182}],84:[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/AutoFocusMixin.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./keyMirror":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyMirror.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20228,8 +20336,8 @@ ReactDOMComponent.injection = {
 
 module.exports = ReactDOMComponent;
 
-}).call(this,require("q+64fw"))
-},{"./CSSPropertyOperations":46,"./DOMProperty":51,"./DOMPropertyOperations":52,"./Object.assign":68,"./ReactBrowserEventEmitter":72,"./ReactComponentBrowserEnvironment":77,"./ReactMount":112,"./ReactMultiChild":113,"./ReactPerf":117,"./escapeTextContentForBrowser":158,"./invariant":177,"./isEventSupported":178,"./keyOf":183,"./warning":196,"q+64fw":203}],85:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./CSSPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CSSPropertyOperations.js","./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js","./DOMPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactBrowserEventEmitter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactComponentBrowserEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactMultiChild":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMultiChild.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./escapeTextContentForBrowser":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/escapeTextContentForBrowser.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./isEventSupported":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isEventSupported.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMForm.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20278,7 +20386,7 @@ var ReactDOMForm = ReactClass.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":56,"./LocalEventTrapMixin":66,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99}],86:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMIDOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20445,8 +20553,8 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 
 module.exports = ReactDOMIDOperations;
 
-}).call(this,require("q+64fw"))
-},{"./CSSPropertyOperations":46,"./DOMChildrenOperations":50,"./DOMPropertyOperations":52,"./ReactMount":112,"./ReactPerf":117,"./invariant":177,"./setInnerHTML":190,"q+64fw":203}],87:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./CSSPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CSSPropertyOperations.js","./DOMChildrenOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMChildrenOperations.js","./DOMPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMPropertyOperations.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/setInnerHTML.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMIframe.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20491,7 +20599,7 @@ var ReactDOMIframe = ReactClass.createClass({
 
 module.exports = ReactDOMIframe;
 
-},{"./EventConstants":56,"./LocalEventTrapMixin":66,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99}],88:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMImg.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20537,7 +20645,7 @@ var ReactDOMImg = ReactClass.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":56,"./LocalEventTrapMixin":66,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99}],89:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMInput.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20713,8 +20821,8 @@ var ReactDOMInput = ReactClass.createClass({
 
 module.exports = ReactDOMInput;
 
-}).call(this,require("q+64fw"))
-},{"./AutoFocusMixin":43,"./DOMPropertyOperations":52,"./LinkedValueUtils":65,"./Object.assign":68,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99,"./ReactMount":112,"./ReactUpdates":129,"./invariant":177,"q+64fw":203}],90:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./AutoFocusMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMOption.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20765,8 +20873,8 @@ var ReactDOMOption = ReactClass.createClass({
 
 module.exports = ReactDOMOption;
 
-}).call(this,require("q+64fw"))
-},{"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99,"./warning":196,"q+64fw":203}],91:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMSelect.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20944,7 +21052,7 @@ var ReactDOMSelect = ReactClass.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":43,"./LinkedValueUtils":65,"./Object.assign":68,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99,"./ReactUpdates":129}],92:[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/AutoFocusMixin.js","./LinkedValueUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMSelection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21157,7 +21265,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":62,"./getNodeForCharacterOffset":170,"./getTextContentAccessor":172}],93:[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./getNodeForCharacterOffset":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getNodeForCharacterOffset.js","./getTextContentAccessor":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMTextComponent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21274,7 +21382,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 
-},{"./DOMPropertyOperations":52,"./Object.assign":68,"./ReactComponentBrowserEnvironment":77,"./ReactDOMComponent":84,"./escapeTextContentForBrowser":158}],94:[function(require,module,exports){
+},{"./DOMPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactComponentBrowserEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMComponent.js","./escapeTextContentForBrowser":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMTextarea.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21413,8 +21521,8 @@ var ReactDOMTextarea = ReactClass.createClass({
 
 module.exports = ReactDOMTextarea;
 
-}).call(this,require("q+64fw"))
-},{"./AutoFocusMixin":43,"./DOMPropertyOperations":52,"./LinkedValueUtils":65,"./Object.assign":68,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactElement":99,"./ReactUpdates":129,"./invariant":177,"./warning":196,"q+64fw":203}],95:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./AutoFocusMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultBatchingStrategy.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21487,7 +21595,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":68,"./ReactUpdates":129,"./Transaction":145,"./emptyFunction":156}],96:[function(require,module,exports){
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./Transaction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultInjection.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21645,8 +21753,8 @@ module.exports = {
   inject: inject
 };
 
-}).call(this,require("q+64fw"))
-},{"./BeforeInputEventPlugin":44,"./ChangeEventPlugin":48,"./ClientReactRootIndex":49,"./DefaultEventPluginOrder":54,"./EnterLeaveEventPlugin":55,"./ExecutionEnvironment":62,"./HTMLDOMPropertyConfig":64,"./MobileSafariClickEventPlugin":67,"./ReactBrowserComponentMixin":71,"./ReactClass":75,"./ReactComponentBrowserEnvironment":77,"./ReactDOMButton":83,"./ReactDOMComponent":84,"./ReactDOMForm":85,"./ReactDOMIDOperations":86,"./ReactDOMIframe":87,"./ReactDOMImg":88,"./ReactDOMInput":89,"./ReactDOMOption":90,"./ReactDOMSelect":91,"./ReactDOMTextComponent":93,"./ReactDOMTextarea":94,"./ReactDefaultBatchingStrategy":95,"./ReactDefaultPerf":97,"./ReactElement":99,"./ReactEventListener":104,"./ReactInjection":106,"./ReactInstanceHandles":108,"./ReactMount":112,"./ReactReconcileTransaction":122,"./SVGDOMPropertyConfig":130,"./SelectEventPlugin":131,"./ServerReactRootIndex":132,"./SimpleEventPlugin":133,"./createFullPageComponent":153,"q+64fw":203}],97:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./BeforeInputEventPlugin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/BeforeInputEventPlugin.js","./ChangeEventPlugin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ChangeEventPlugin.js","./ClientReactRootIndex":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ClientReactRootIndex.js","./DefaultEventPluginOrder":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DefaultEventPluginOrder.js","./EnterLeaveEventPlugin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EnterLeaveEventPlugin.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./HTMLDOMPropertyConfig":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/HTMLDOMPropertyConfig.js","./MobileSafariClickEventPlugin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/MobileSafariClickEventPlugin.js","./ReactBrowserComponentMixin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactComponentBrowserEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMButton":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMButton.js","./ReactDOMComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMComponent.js","./ReactDOMForm":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMForm.js","./ReactDOMIDOperations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMIDOperations.js","./ReactDOMIframe":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMIframe.js","./ReactDOMImg":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMImg.js","./ReactDOMInput":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMInput.js","./ReactDOMOption":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMOption.js","./ReactDOMSelect":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMSelect.js","./ReactDOMTextComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDOMTextarea":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMTextarea.js","./ReactDefaultBatchingStrategy":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultBatchingStrategy.js","./ReactDefaultPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultPerf.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactEventListener":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEventListener.js","./ReactInjection":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInjection.js","./ReactInstanceHandles":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactReconcileTransaction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconcileTransaction.js","./SVGDOMPropertyConfig":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SVGDOMPropertyConfig.js","./SelectEventPlugin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SelectEventPlugin.js","./ServerReactRootIndex":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ServerReactRootIndex.js","./SimpleEventPlugin":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SimpleEventPlugin.js","./createFullPageComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/createFullPageComponent.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultPerf.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21912,7 +22020,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":51,"./ReactDefaultPerfAnalysis":98,"./ReactMount":112,"./ReactPerf":117,"./performanceNow":188}],98:[function(require,module,exports){
+},{"./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js","./ReactDefaultPerfAnalysis":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultPerfAnalysis.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./performanceNow":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/performanceNow.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDefaultPerfAnalysis.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22118,7 +22226,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":68}],99:[function(require,module,exports){
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22425,8 +22533,8 @@ ReactElement.isValidElement = function(object) {
 
 module.exports = ReactElement;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./ReactContext":80,"./ReactCurrentOwner":81,"./warning":196,"q+64fw":203}],100:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactContext":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElementValidator.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22890,8 +22998,8 @@ var ReactElementValidator = {
 
 module.exports = ReactElementValidator;
 
-}).call(this,require("q+64fw"))
-},{"./ReactCurrentOwner":81,"./ReactElement":99,"./ReactFragment":105,"./ReactNativeComponent":115,"./ReactPropTypeLocationNames":118,"./ReactPropTypeLocations":119,"./getIteratorFn":168,"./invariant":177,"./warning":196,"q+64fw":203}],101:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactFragment.js","./ReactNativeComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactNativeComponent.js","./ReactPropTypeLocationNames":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocations.js","./getIteratorFn":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEmptyComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22985,8 +23093,8 @@ var ReactEmptyComponent = {
 
 module.exports = ReactEmptyComponent;
 
-}).call(this,require("q+64fw"))
-},{"./ReactElement":99,"./ReactInstanceMap":109,"./invariant":177,"q+64fw":203}],102:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactErrorUtils.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23018,7 +23126,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],103:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEventEmitterMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23068,7 +23176,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":58}],104:[function(require,module,exports){
+},{"./EventPluginHub":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginHub.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEventListener.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23251,7 +23359,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":57,"./ExecutionEnvironment":62,"./Object.assign":68,"./PooledClass":69,"./ReactInstanceHandles":108,"./ReactMount":112,"./ReactUpdates":129,"./getEventTarget":167,"./getUnboundedScrollPosition":173}],105:[function(require,module,exports){
+},{"./EventListener":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventListener.js","./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./ReactInstanceHandles":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./getEventTarget":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventTarget.js","./getUnboundedScrollPosition":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getUnboundedScrollPosition.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactFragment.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -23435,8 +23543,8 @@ var ReactFragment = {
 
 module.exports = ReactFragment;
 
-}).call(this,require("q+64fw"))
-},{"./ReactElement":99,"./warning":196,"q+64fw":203}],106:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInjection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23478,7 +23586,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":51,"./EventPluginHub":58,"./ReactBrowserEventEmitter":72,"./ReactClass":75,"./ReactComponentEnvironment":78,"./ReactDOMComponent":84,"./ReactEmptyComponent":101,"./ReactNativeComponent":115,"./ReactPerf":117,"./ReactRootIndex":125,"./ReactUpdates":129}],107:[function(require,module,exports){
+},{"./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js","./EventPluginHub":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginHub.js","./ReactBrowserEventEmitter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactComponentEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentEnvironment.js","./ReactDOMComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMComponent.js","./ReactEmptyComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./ReactRootIndex":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactRootIndex.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInputSelection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23613,7 +23721,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":92,"./containsNode":151,"./focusNode":161,"./getActiveElement":163}],108:[function(require,module,exports){
+},{"./ReactDOMSelection":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactDOMSelection.js","./containsNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/containsNode.js","./focusNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/focusNode.js","./getActiveElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getActiveElement.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23948,8 +24056,8 @@ var ReactInstanceHandles = {
 
 module.exports = ReactInstanceHandles;
 
-}).call(this,require("q+64fw"))
-},{"./ReactRootIndex":125,"./invariant":177,"q+64fw":203}],109:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactRootIndex":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactRootIndex.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23998,7 +24106,7 @@ var ReactInstanceMap = {
 
 module.exports = ReactInstanceMap;
 
-},{}],110:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactLifeCycle.js":[function(require,module,exports){
 /**
  * Copyright 2015, Facebook, Inc.
  * All rights reserved.
@@ -24035,7 +24143,7 @@ var ReactLifeCycle = {
 
 module.exports = ReactLifeCycle;
 
-},{}],111:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMarkupChecksum.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24083,7 +24191,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":148}],112:[function(require,module,exports){
+},{"./adler32":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/adler32.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24973,8 +25081,8 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 
 module.exports = ReactMount;
 
-}).call(this,require("q+64fw"))
-},{"./DOMProperty":51,"./ReactBrowserEventEmitter":72,"./ReactCurrentOwner":81,"./ReactElement":99,"./ReactElementValidator":100,"./ReactEmptyComponent":101,"./ReactInstanceHandles":108,"./ReactInstanceMap":109,"./ReactMarkupChecksum":111,"./ReactPerf":117,"./ReactReconciler":123,"./ReactUpdateQueue":128,"./ReactUpdates":129,"./containsNode":151,"./emptyObject":157,"./getReactRootElementInContainer":171,"./instantiateReactComponent":176,"./invariant":177,"./setInnerHTML":190,"./shouldUpdateReactComponent":193,"./warning":196,"q+64fw":203}],113:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js","./ReactBrowserEventEmitter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElementValidator.js","./ReactEmptyComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEmptyComponent.js","./ReactInstanceHandles":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js","./ReactInstanceMap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js","./ReactMarkupChecksum":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMarkupChecksum.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js","./ReactUpdateQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdateQueue.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./containsNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/containsNode.js","./emptyObject":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyObject.js","./getReactRootElementInContainer":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getReactRootElementInContainer.js","./instantiateReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/setInnerHTML.js","./shouldUpdateReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMultiChild.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25404,7 +25512,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactChildReconciler":73,"./ReactComponentEnvironment":78,"./ReactMultiChildUpdateTypes":114,"./ReactReconciler":123}],114:[function(require,module,exports){
+},{"./ReactChildReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactChildReconciler.js","./ReactComponentEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactComponentEnvironment.js","./ReactMultiChildUpdateTypes":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./ReactReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMultiChildUpdateTypes.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25437,7 +25545,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":182}],115:[function(require,module,exports){
+},{"./keyMirror":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyMirror.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactNativeComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -25543,8 +25651,8 @@ var ReactNativeComponent = {
 
 module.exports = ReactNativeComponent;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./invariant":177,"q+64fw":203}],116:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactOwner.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25655,8 +25763,8 @@ var ReactOwner = {
 
 module.exports = ReactOwner;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],117:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25759,8 +25867,8 @@ function _noMeasure(objName, fnName, func) {
 
 module.exports = ReactPerf;
 
-}).call(this,require("q+64fw"))
-},{"q+64fw":203}],118:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocationNames.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25787,8 +25895,8 @@ if ("production" !== process.env.NODE_ENV) {
 
 module.exports = ReactPropTypeLocationNames;
 
-}).call(this,require("q+64fw"))
-},{"q+64fw":203}],119:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocations.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25812,7 +25920,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":182}],120:[function(require,module,exports){
+},{"./keyMirror":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyMirror.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypes.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26161,7 +26269,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":99,"./ReactFragment":105,"./ReactPropTypeLocationNames":118,"./emptyFunction":156}],121:[function(require,module,exports){
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactFragment.js","./ReactPropTypeLocationNames":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPropTypeLocationNames.js","./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPutListenerQueue.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26217,7 +26325,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":68,"./PooledClass":69,"./ReactBrowserEventEmitter":72}],122:[function(require,module,exports){
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconcileTransaction.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26393,7 +26501,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":47,"./Object.assign":68,"./PooledClass":69,"./ReactBrowserEventEmitter":72,"./ReactInputSelection":107,"./ReactPutListenerQueue":121,"./Transaction":145}],123:[function(require,module,exports){
+},{"./CallbackQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactInputSelection":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInputSelection.js","./ReactPutListenerQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Transaction.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26516,8 +26624,8 @@ var ReactReconciler = {
 
 module.exports = ReactReconciler;
 
-}).call(this,require("q+64fw"))
-},{"./ReactElementValidator":100,"./ReactRef":124,"q+64fw":203}],124:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElementValidator":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElementValidator.js","./ReactRef":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactRef.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactRef.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26588,7 +26696,7 @@ ReactRef.detachRefs = function(instance, element) {
 
 module.exports = ReactRef;
 
-},{"./ReactOwner":116}],125:[function(require,module,exports){
+},{"./ReactOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactOwner.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26619,7 +26727,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],126:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactServerRendering.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26700,8 +26808,8 @@ module.exports = {
   renderToStaticMarkup: renderToStaticMarkup
 };
 
-}).call(this,require("q+64fw"))
-},{"./ReactElement":99,"./ReactInstanceHandles":108,"./ReactMarkupChecksum":111,"./ReactServerRenderingTransaction":127,"./emptyObject":157,"./instantiateReactComponent":176,"./invariant":177,"q+64fw":203}],127:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactInstanceHandles":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js","./ReactMarkupChecksum":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMarkupChecksum.js","./ReactServerRenderingTransaction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactServerRenderingTransaction.js","./emptyObject":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyObject.js","./instantiateReactComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactServerRenderingTransaction.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -26814,7 +26922,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":47,"./Object.assign":68,"./PooledClass":69,"./ReactPutListenerQueue":121,"./Transaction":145,"./emptyFunction":156}],128:[function(require,module,exports){
+},{"./CallbackQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./ReactPutListenerQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdateQueue.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -27112,8 +27220,8 @@ var ReactUpdateQueue = {
 
 module.exports = ReactUpdateQueue;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./ReactCurrentOwner":81,"./ReactElement":99,"./ReactInstanceMap":109,"./ReactLifeCycle":110,"./ReactUpdates":129,"./invariant":177,"./warning":196,"q+64fw":203}],129:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactLifeCycle.js","./ReactUpdates":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactUpdates.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27394,8 +27502,8 @@ var ReactUpdates = {
 
 module.exports = ReactUpdates;
 
-}).call(this,require("q+64fw"))
-},{"./CallbackQueue":47,"./Object.assign":68,"./PooledClass":69,"./ReactCurrentOwner":81,"./ReactPerf":117,"./ReactReconciler":123,"./Transaction":145,"./invariant":177,"./warning":196,"q+64fw":203}],130:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./CallbackQueue":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactPerf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactReconciler.js","./Transaction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Transaction.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SVGDOMPropertyConfig.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27489,7 +27597,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":51}],131:[function(require,module,exports){
+},{"./DOMProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/DOMProperty.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SelectEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27684,7 +27792,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":56,"./EventPropagators":61,"./ReactInputSelection":107,"./SyntheticEvent":137,"./getActiveElement":163,"./isTextInputElement":180,"./keyOf":183,"./shallowEqual":192}],132:[function(require,module,exports){
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPropagators.js","./ReactInputSelection":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInputSelection.js","./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js","./getActiveElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getActiveElement.js","./isTextInputElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js","./shallowEqual":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/shallowEqual.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ServerReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27715,7 +27823,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],133:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SimpleEventPlugin.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -28142,8 +28250,8 @@ var SimpleEventPlugin = {
 
 module.exports = SimpleEventPlugin;
 
-}).call(this,require("q+64fw"))
-},{"./EventConstants":56,"./EventPluginUtils":60,"./EventPropagators":61,"./SyntheticClipboardEvent":134,"./SyntheticDragEvent":136,"./SyntheticEvent":137,"./SyntheticFocusEvent":138,"./SyntheticKeyboardEvent":140,"./SyntheticMouseEvent":141,"./SyntheticTouchEvent":142,"./SyntheticUIEvent":143,"./SyntheticWheelEvent":144,"./getEventCharCode":164,"./invariant":177,"./keyOf":183,"./warning":196,"q+64fw":203}],134:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./EventConstants":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventConstants.js","./EventPluginUtils":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPluginUtils.js","./EventPropagators":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/EventPropagators.js","./SyntheticClipboardEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticClipboardEvent.js","./SyntheticDragEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticDragEvent.js","./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js","./SyntheticFocusEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticFocusEvent.js","./SyntheticKeyboardEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticKeyboardEvent.js","./SyntheticMouseEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticMouseEvent.js","./SyntheticTouchEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticTouchEvent.js","./SyntheticUIEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticUIEvent.js","./SyntheticWheelEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticWheelEvent.js","./getEventCharCode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventCharCode.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./keyOf":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticClipboardEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28188,7 +28296,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
 
-},{"./SyntheticEvent":137}],135:[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticCompositionEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28233,7 +28341,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticCompositionEvent;
 
-},{"./SyntheticEvent":137}],136:[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticDragEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28272,7 +28380,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":141}],137:[function(require,module,exports){
+},{"./SyntheticMouseEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28438,7 +28546,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":68,"./PooledClass":69,"./emptyFunction":156,"./getEventTarget":167}],138:[function(require,module,exports){
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/PooledClass.js","./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js","./getEventTarget":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventTarget.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticFocusEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28477,7 +28585,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":143}],139:[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticUIEvent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticInputEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28523,7 +28631,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticInputEvent;
 
-},{"./SyntheticEvent":137}],140:[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticKeyboardEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28610,7 +28718,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":143,"./getEventCharCode":164,"./getEventKey":165,"./getEventModifierState":166}],141:[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticUIEvent.js","./getEventCharCode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventCharCode.js","./getEventKey":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventKey.js","./getEventModifierState":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventModifierState.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticMouseEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28691,7 +28799,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":143,"./ViewportMetrics":146,"./getEventModifierState":166}],142:[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticUIEvent.js","./ViewportMetrics":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ViewportMetrics.js","./getEventModifierState":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventModifierState.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticTouchEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28739,7 +28847,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":143,"./getEventModifierState":166}],143:[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticUIEvent.js","./getEventModifierState":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventModifierState.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticUIEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28801,7 +28909,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":137,"./getEventTarget":167}],144:[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticEvent.js","./getEventTarget":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventTarget.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticWheelEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28862,7 +28970,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":141}],145:[function(require,module,exports){
+},{"./SyntheticMouseEvent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Transaction.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29102,8 +29210,8 @@ var Transaction = {
 
 module.exports = Transaction;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],146:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ViewportMetrics.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29132,7 +29240,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{}],147:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/accumulateInto.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -29197,8 +29305,8 @@ function accumulateInto(current, next) {
 
 module.exports = accumulateInto;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],148:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/adler32.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29232,7 +29340,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],149:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/camelize.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29264,7 +29372,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],150:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/camelizeStyleName.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29306,7 +29414,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":149}],151:[function(require,module,exports){
+},{"./camelize":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/camelize.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/containsNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29350,7 +29458,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":181}],152:[function(require,module,exports){
+},{"./isTextNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isTextNode.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/createArrayFromMixed.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29436,7 +29544,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 
-},{"./toArray":194}],153:[function(require,module,exports){
+},{"./toArray":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/toArray.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/createFullPageComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29497,8 +29605,8 @@ function createFullPageComponent(tag) {
 
 module.exports = createFullPageComponent;
 
-}).call(this,require("q+64fw"))
-},{"./ReactClass":75,"./ReactElement":99,"./invariant":177,"q+64fw":203}],154:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactClass":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/createNodesFromMarkup.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29587,8 +29695,8 @@ function createNodesFromMarkup(markup, handleScript) {
 
 module.exports = createNodesFromMarkup;
 
-}).call(this,require("q+64fw"))
-},{"./ExecutionEnvironment":62,"./createArrayFromMixed":152,"./getMarkupWrap":169,"./invariant":177,"q+64fw":203}],155:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./createArrayFromMixed":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/createArrayFromMixed.js","./getMarkupWrap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/dangerousStyleValue.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29646,7 +29754,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":45}],156:[function(require,module,exports){
+},{"./CSSProperty":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/CSSProperty.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29680,7 +29788,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],157:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyObject.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29703,8 +29811,8 @@ if ("production" !== process.env.NODE_ENV) {
 
 module.exports = emptyObject;
 
-}).call(this,require("q+64fw"))
-},{"q+64fw":203}],158:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/escapeTextContentForBrowser.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29744,7 +29852,7 @@ function escapeTextContentForBrowser(text) {
 
 module.exports = escapeTextContentForBrowser;
 
-},{}],159:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/findDOMNode.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29816,8 +29924,8 @@ function findDOMNode(componentOrElement) {
 
 module.exports = findDOMNode;
 
-}).call(this,require("q+64fw"))
-},{"./ReactCurrentOwner":81,"./ReactInstanceMap":109,"./ReactMount":112,"./invariant":177,"./isNode":179,"./warning":196,"q+64fw":203}],160:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactCurrentOwner":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCurrentOwner.js","./ReactInstanceMap":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceMap.js","./ReactMount":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactMount.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./isNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isNode.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/flattenChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29874,8 +29982,8 @@ function flattenChildren(children) {
 
 module.exports = flattenChildren;
 
-}).call(this,require("q+64fw"))
-},{"./traverseAllChildren":195,"./warning":196,"q+64fw":203}],161:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./traverseAllChildren":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/focusNode.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29904,7 +30012,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],162:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/forEachAccumulated.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29935,7 +30043,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],163:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getActiveElement.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29964,7 +30072,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],164:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventCharCode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30016,7 +30124,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],165:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventKey.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30121,7 +30229,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":164}],166:[function(require,module,exports){
+},{"./getEventCharCode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventCharCode.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventModifierState.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30168,7 +30276,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],167:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getEventTarget.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30199,7 +30307,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],168:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getIteratorFn.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30243,7 +30351,7 @@ function getIteratorFn(maybeIterable) {
 
 module.exports = getIteratorFn;
 
-},{}],169:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getMarkupWrap.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30361,8 +30469,8 @@ function getMarkupWrap(nodeName) {
 
 module.exports = getMarkupWrap;
 
-}).call(this,require("q+64fw"))
-},{"./ExecutionEnvironment":62,"./invariant":177,"q+64fw":203}],170:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getNodeForCharacterOffset.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30437,7 +30545,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],171:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getReactRootElementInContainer.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30472,7 +30580,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],172:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getTextContentAccessor.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30509,7 +30617,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":62}],173:[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getUnboundedScrollPosition.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30549,7 +30657,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],174:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/hyphenate.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30582,7 +30690,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],175:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/hyphenateStyleName.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30623,7 +30731,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":174}],176:[function(require,module,exports){
+},{"./hyphenate":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/hyphenate.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/instantiateReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30760,8 +30868,8 @@ function instantiateReactComponent(node, parentCompositeType) {
 
 module.exports = instantiateReactComponent;
 
-}).call(this,require("q+64fw"))
-},{"./Object.assign":68,"./ReactCompositeComponent":79,"./ReactEmptyComponent":101,"./ReactNativeComponent":115,"./invariant":177,"./warning":196,"q+64fw":203}],177:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./Object.assign":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/Object.assign.js","./ReactCompositeComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactCompositeComponent.js","./ReactEmptyComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactNativeComponent.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30817,8 +30925,8 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-}).call(this,require("q+64fw"))
-},{"q+64fw":203}],178:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isEventSupported.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30883,7 +30991,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":62}],179:[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30910,7 +31018,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],180:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isTextInputElement.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30953,7 +31061,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],181:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isTextNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30978,7 +31086,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":179}],182:[function(require,module,exports){
+},{"./isNode":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/isNode.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyMirror.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31032,8 +31140,8 @@ var keyMirror = function(obj) {
 
 module.exports = keyMirror;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],183:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/keyOf.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31069,7 +31177,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],184:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/mapObject.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31122,7 +31230,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],185:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/memoizeStringOnly.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31155,7 +31263,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],186:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/onlyChild.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31194,8 +31302,8 @@ function onlyChild(children) {
 
 module.exports = onlyChild;
 
-}).call(this,require("q+64fw"))
-},{"./ReactElement":99,"./invariant":177,"q+64fw":203}],187:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/performance.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31223,7 +31331,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":62}],188:[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/performanceNow.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31251,7 +31359,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":187}],189:[function(require,module,exports){
+},{"./performance":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/performance.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/quoteAttributeValueForBrowser.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31279,7 +31387,7 @@ function quoteAttributeValueForBrowser(value) {
 
 module.exports = quoteAttributeValueForBrowser;
 
-},{"./escapeTextContentForBrowser":158}],190:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/setInnerHTML.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31368,7 +31476,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":62}],191:[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/setTextContent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31410,7 +31518,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setTextContent;
 
-},{"./ExecutionEnvironment":62,"./escapeTextContentForBrowser":158,"./setInnerHTML":190}],192:[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ExecutionEnvironment.js","./escapeTextContentForBrowser":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/escapeTextContentForBrowser.js","./setInnerHTML":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/setInnerHTML.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/shallowEqual.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31454,7 +31562,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],193:[function(require,module,exports){
+},{}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/shouldUpdateReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31557,8 +31665,8 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 
 module.exports = shouldUpdateReactComponent;
 
-}).call(this,require("q+64fw"))
-},{"./warning":196,"q+64fw":203}],194:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/toArray.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31629,8 +31737,8 @@ function toArray(obj) {
 
 module.exports = toArray;
 
-}).call(this,require("q+64fw"))
-},{"./invariant":177,"q+64fw":203}],195:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/traverseAllChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31882,8 +31990,8 @@ function traverseAllChildren(children, callback, traverseContext) {
 
 module.exports = traverseAllChildren;
 
-}).call(this,require("q+64fw"))
-},{"./ReactElement":99,"./ReactFragment":105,"./ReactInstanceHandles":108,"./getIteratorFn":168,"./invariant":177,"./warning":196,"q+64fw":203}],196:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./ReactElement":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactFragment.js","./ReactInstanceHandles":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/ReactInstanceHandles.js","./getIteratorFn":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/invariant.js","./warning":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/warning.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31945,11 +32053,11 @@ if ("production" !== process.env.NODE_ENV) {
 
 module.exports = warning;
 
-}).call(this,require("q+64fw"))
-},{"./emptyFunction":156,"q+64fw":203}],197:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js":[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":70}],198:[function(require,module,exports){
+},{"./lib/React":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/React.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/index.js":[function(require,module,exports){
 'use strict';
 
 var Client = require('react-engine/lib/client');
@@ -31967,7 +32075,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
   Client.boot(options);
 });
 
-},{"./views/Pokemon.jsx":199,"./views/PokemonSearch.jsx":200,"./views/index.jsx":201,"./views/layout.jsx":202,"react-engine/lib/client":2}],199:[function(require,module,exports){
+},{"./views/Pokemon.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/Pokemon.jsx","./views/PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx","./views/index.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/index.jsx","./views/layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","react-engine/lib/client":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/client.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/Pokemon.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -32042,7 +32150,7 @@ var Pokemon = React.createClass({
 
 module.exports = Pokemon;
 
-},{"./PokemonSearch.jsx":200,"./layout.jsx":202,"jquery":1,"react":197}],200:[function(require,module,exports){
+},{"./PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","jquery":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/jquery/dist/jquery.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx":[function(require,module,exports){
 "use strict";
 
 var React = require("react");
@@ -32087,7 +32195,7 @@ var PokemonSearch = React.createClass({
 
 module.exports = PokemonSearch;
 
-},{"react":197}],201:[function(require,module,exports){
+},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/index.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -32119,7 +32227,7 @@ module.exports = React.createClass({
 
 });
 
-},{"./PokemonSearch.jsx":200,"./layout.jsx":202,"jquery":1,"react":197}],202:[function(require,module,exports){
+},{"./PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","jquery":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/jquery/dist/jquery.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -32152,69 +32260,4 @@ module.exports = React.createClass({
   }
 });
 
-},{"react":197}],203:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}]},{},[198])
+},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}]},{},["/Users/Leonidas/proyectos/random/react-pokemon/public/index.js"]);

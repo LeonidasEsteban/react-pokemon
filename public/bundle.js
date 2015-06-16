@@ -9332,7 +9332,7 @@ exports.boot = function boot(options, callback) {
 };
 
 },{"./config":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-engine/lib/config.json","react":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react/react.js","react-router":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-router/lib/index.js"}],"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-engine/lib/config.json":[function(require,module,exports){
-module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports={
   "docType": "<!DOCTYPE html>",
   "client": {
     "markupId": "react-engine-props",

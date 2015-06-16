@@ -2,7 +2,7 @@
   "name": "",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "dependencies": {
     "express": "^4.10.4",
     "pokenode": "0.1.1",
@@ -19,6 +19,7 @@
     "babelify": "^6.1.2"
   },
   "scripts": {
+    "start": "npm run watchify && node server.js",
     "watchify": "watchify -t babelify -t reactify -t require-globify public/index.js -o public/bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

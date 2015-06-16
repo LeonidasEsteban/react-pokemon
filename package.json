@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "React Pokemon",
   "version": "0.0.1",
   "description": "",
   "main": "server.js",
@@ -19,7 +19,7 @@
     "babelify": "^6.1.2"
   },
   "engines": {
-    "node": "0.12.2"
+    "node": "0.10.26"
   },
   "scripts": {
     "start": "node server.js",

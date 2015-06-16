@@ -1,0 +1,7 @@
+{
+  "name": "Pokemon",
+  "description": "A barebones Node.js app using Express 4",
+  "repository": "https://github.com/LeonidasEsteban/react-pokemon",
+  "logo": "http://www.shmoggo.com/wp-content/uploads/2014/09/pikachu-thumb-2.png",
+  "keywords": ["react","react.js", "server", "pokemon"]
+}

@@ -42,10 +42,10 @@ function index(req, res) {
 function pokemon(req, res){
     pokeAPI.pokemon(req.params.id, function(err, data) {
         if(err) {
-            console.log(err)
+            res.send('hubo un error, porfa busca un pokemon valido');
         } else {
             res.render('Pokemon', {
-                title : "Pokemon encontrado",
+                title : "Pokemon encontrado :)",
                 pokemon : data
             });
         }

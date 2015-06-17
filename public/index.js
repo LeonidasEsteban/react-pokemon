@@ -2,7 +2,7 @@
 
 var Client = require('react-engine/lib/client');
 
-require('./views/**/*.jsx', {glob: true});
+require('./**/**/*.jsx', {glob: true});
 
 var options = {
   viewResolver: function(viewName) {

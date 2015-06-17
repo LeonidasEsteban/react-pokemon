@@ -32057,32 +32057,11 @@ module.exports = warning;
 },{"./emptyFunction":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/emptyFunction.js","_process":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/browserify/node_modules/process/browser.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js":[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/React.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/index.js":[function(require,module,exports){
-'use strict';
-
-var Client = require('react-engine/lib/client');
-
-require('./views/Pokemon.jsx');require('./views/PokemonSearch.jsx');require('./views/index.jsx');require('./views/layout.jsx');
-
-var options = {
-  viewResolver: function viewResolver(viewName) {
-    console.log(viewName);
-    return require('./views/' + viewName);
-  }
-};
-
-document.addEventListener('DOMContentLoaded', function onLoad() {
-  Client.boot(options);
-});
-
-},{"./views/Pokemon.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/Pokemon.jsx","./views/PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx","./views/index.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/index.jsx","./views/layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","react-engine/lib/client":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/client.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/Pokemon.jsx":[function(require,module,exports){
+},{"./lib/React":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/lib/React.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/components/Pokemon.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var $ = require('jquery');
-
-var Layout = require('./layout.jsx');
-var PokemonSearch = require('./PokemonSearch.jsx');
 
 var Pokemon = React.createClass({
     displayName: 'Pokemon',
@@ -32094,53 +32073,37 @@ var Pokemon = React.createClass({
     render: function render() {
         var sprite = 'http://pokeapi.co/media/img/' + this.props.pokemon.national_id + '.png';
         return React.createElement(
-            Layout,
-            this.props,
+            'table',
+            null,
             React.createElement(
-                'h2',
-                null,
-                'Pokemon encontrado!'
-            ),
-            React.createElement(
-                'table',
+                'tr',
                 null,
                 React.createElement(
-                    'tr',
+                    'td',
                     null,
-                    React.createElement(
-                        'td',
-                        null,
-                        'Nombre'
-                    ),
-                    React.createElement(
-                        'td',
-                        null,
-                        this.props.pokemon.name
-                    )
+                    'Nombre'
                 ),
                 React.createElement(
-                    'tr',
+                    'td',
                     null,
-                    React.createElement(
-                        'td',
-                        null,
-                        'Imagen'
-                    ),
-                    React.createElement(
-                        'td',
-                        null,
-                        React.createElement('img', { src: sprite, alt: '' }),
-                        ' '
-                    )
+                    this.props.pokemon.name
                 )
             ),
-            React.createElement('hr', null),
             React.createElement(
-                'h2',
+                'tr',
                 null,
-                'Busca otro pokemon'
-            ),
-            React.createElement(PokemonSearch, null)
+                React.createElement(
+                    'td',
+                    null,
+                    'Imagen'
+                ),
+                React.createElement(
+                    'td',
+                    null,
+                    React.createElement('img', { src: sprite, alt: '' }),
+                    ' '
+                )
+            )
         );
     },
     _click: function _click() {
@@ -32150,7 +32113,7 @@ var Pokemon = React.createClass({
 
 module.exports = Pokemon;
 
-},{"./PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","jquery":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/jquery/dist/jquery.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx":[function(require,module,exports){
+},{"jquery":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/jquery/dist/jquery.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/components/PokemonSearch.jsx":[function(require,module,exports){
 "use strict";
 
 var React = require("react");
@@ -32195,14 +32158,62 @@ var PokemonSearch = React.createClass({
 
 module.exports = PokemonSearch;
 
-},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/index.jsx":[function(require,module,exports){
+},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/index.js":[function(require,module,exports){
+'use strict';
+
+var Client = require('react-engine/lib/client');
+
+require('./components/Pokemon.jsx');require('./components/PokemonSearch.jsx');require('./views/404.jsx');require('./views/index.jsx');require('./views/layout.jsx');require('./views/pokemon.jsx');
+
+var options = {
+  viewResolver: function viewResolver(viewName) {
+    console.log(viewName);
+    return require('./views/' + viewName);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function onLoad() {
+  Client.boot(options);
+});
+
+},{"./components/Pokemon.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/components/Pokemon.jsx","./components/PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/components/PokemonSearch.jsx","./views/404.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/404.jsx","./views/index.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/index.jsx","./views/layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","./views/pokemon.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/pokemon.jsx","react-engine/lib/client":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/client.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/404.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
-var $ = require('jquery');
 
 var Layout = require('./layout.jsx');
-var PokemonSearch = require('./PokemonSearch.jsx');
+var PokemonSearch = require('../components/PokemonSearch.jsx');
+
+module.exports = React.createClass({
+  displayName: 'exports',
+
+  render: function render() {
+
+    return React.createElement(
+      Layout,
+      this.props,
+      React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'h1',
+          null,
+          'hubo un error, porfa busca un pokemon valido'
+        ),
+        React.createElement(PokemonSearch, null)
+      )
+    );
+  }
+
+});
+
+},{"../components/PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/components/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/index.jsx":[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+var Layout = require('./layout.jsx');
+var PokemonSearch = require('../components/PokemonSearch.jsx');
 
 module.exports = React.createClass({
   displayName: 'exports',
@@ -32227,7 +32238,7 @@ module.exports = React.createClass({
 
 });
 
-},{"./PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","jquery":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/jquery/dist/jquery.js","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx":[function(require,module,exports){
+},{"../components/PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/components/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -32260,4 +32271,39 @@ module.exports = React.createClass({
   }
 });
 
-},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}]},{},["/Users/Leonidas/proyectos/random/react-pokemon/public/index.js"]);
+},{"react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/public/views/pokemon.jsx":[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+var Layout = require('./layout.jsx');
+var PokemonSearch = require('../components/PokemonSearch.jsx');
+var Pokemon = require('../components/Pokemon.jsx');
+
+module.exports = React.createClass({
+  displayName: 'exports',
+
+  render: function render() {
+
+    return React.createElement(
+      Layout,
+      this.props,
+      React.createElement(
+        'h2',
+        null,
+        'Pokemon encontrado!'
+      ),
+      React.createElement(Pokemon, { pokemon: this.props.pokemon }),
+      React.createElement('hr', null),
+      React.createElement(
+        'h2',
+        null,
+        'Busca otro pokemon'
+      ),
+      React.createElement(PokemonSearch, null)
+    );
+  }
+
+});
+
+},{"../components/Pokemon.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/components/Pokemon.jsx","../components/PokemonSearch.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/components/PokemonSearch.jsx","./layout.jsx":"/Users/Leonidas/proyectos/random/react-pokemon/public/views/layout.jsx","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js"}]},{},["/Users/Leonidas/proyectos/random/react-pokemon/public/index.js"]);

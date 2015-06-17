@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react');
 
 var Layout = require('./layout.jsx');
@@ -14,8 +12,8 @@ module.exports = React.createClass({
     
     return (
       <Layout {...this.props}>
-        <div id='index'>
-          <h1>Busca un pokemon, puedes usar numeros del 1 al 718 o su nombre ^ ^</h1>
+        <div >
+          <h1>hubo un error, porfa busca un pokemon valido</h1>
           <PokemonSearch/>
         </div>
       </Layout>

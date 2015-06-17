@@ -1,10 +1,22 @@
 var React = require('react');
+// var Router = require('react-router');
+var Router = require('react-router');
+// var Router = ReactRouter.Router;
+// var Route = ReactRouter.Route;
+// var routes = require('../routes.jsx');
+
+
+// var router = Router.create({
+//   routes: routes,
+//   location: Router.HistoryLocation
+// });
+// var Pokemon = require('../views/pokemon.jsx')
 
 var PokemonSearch = React.createClass({
     getInitialState : function(){
 
       return {
-        pokemonId : "",
+        pokemonId : "1",
       }
     },
     render : function(){
@@ -27,6 +39,7 @@ var PokemonSearch = React.createClass({
     },
     onSubmit: function(event) {
       event.preventDefault();
+      
       document.location.href = '/pokemon/'+this.state.pokemonId;
     },
 

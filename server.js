@@ -7,10 +7,13 @@ var pokeAPI = require('pokenode');
 
 
 require('node-jsx').install();
+var path = require('path');
 
 var renderer = require('react-engine');
 // create the view engine with `react-engine`
-var engine = renderer.server.create();
+var engine = renderer.server.create({
+    reactRoutes: path.join(__dirname + '/public/routes.jsx')
+});
 
 // set the engine
 app.engine('.jsx', engine);
@@ -31,8 +34,8 @@ app.use(express.static(__dirname + '/public'));
 
 
 function index(req, res) {
-
-    res.render('index', {
+    // console.log()
+    res.render(req.url, {
         title: 'Server Render index',
         name: 'Hola mundo'
     });
@@ -49,14 +52,17 @@ function pokemon(req, res){
         } else {
             res.render('pokemon', {
                 title : "Pokemon encontrado :)",
-                pokemon : data
+                pokemon : data,
+                url: req.url
             });
         }
     });
 }
 
 app.get('/', index);
-app.get('/pokemon/:id', pokemon);
+
+
+app.use('/pokemon/:id', pokemon);
 
 
 app.listen(app.get('port'), function(){

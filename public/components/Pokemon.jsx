@@ -1,20 +1,12 @@
 var React = require('react');
 var $ = require('jquery');
 
-
-
 var Pokemon = React.createClass({
-    getInitialState : function(){
-        return {
-        }
-    },
-    componentDidMount : function(){
-        
-    },
     render : function(){
+        this._click();
         var sprite = "http://pokeapi.co/media/img/"+this.props.pokemon.national_id+".png"
         return (
-            <table>
+            <table >
                 <tr>
                     <td>
                         Nombre
@@ -25,7 +17,7 @@ var Pokemon = React.createClass({
                 </tr>
                 <tr>
                     <td>Imagen</td>
-                    <td><img src={sprite} alt=""/> </td>
+                    <td><img src={sprite} alt="" onClick={this._click}/> </td>
                 </tr>
             </table>
         )

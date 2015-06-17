@@ -9375,7 +9375,7 @@ exports.boot = function boot(options, callback) {
 };
 
 },{"./config":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/config.json","react":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react/react.js","react-router":"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-router/lib/index.js"}],"/Users/Leonidas/proyectos/random/react-pokemon/node_modules/react-engine/lib/config.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports={
   "docType": "<!DOCTYPE html>",
   "client": {
     "markupId": "react-engine-props",

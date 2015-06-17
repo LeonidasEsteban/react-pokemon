@@ -1,7 +1,7 @@
 var express = require('express');
 
 var app = express();
-app.set('port', (process.env.PORT || 5000))
+app.set('port', (process.env.PORT || 5000));
 
 var pokeAPI = require('pokenode');
 
@@ -60,5 +60,5 @@ app.get('/pokemon/:id', pokemon);
 
 
 app.listen(app.get('port'), function(){
-    console.log('node está corriendo en el puerto '+app.get('port'))
+    console.log('node está corriendo en el puerto '+app.get('port'));
 });

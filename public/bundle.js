@@ -9375,7 +9375,7 @@ exports.boot = function boot(options, callback) {
 };
 
 },{"./config":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-engine/lib/config.json","react":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react/react.js","react-router":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-router/lib/index.js"}],"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-engine/lib/config.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "docType": "<!DOCTYPE html>",
   "client": {
     "markupId": "react-engine-props",
@@ -32066,9 +32066,29 @@ var $ = require('jquery');
 var Pokemon = React.createClass({
     displayName: 'Pokemon',
 
+    getInitialState: function getInitialState() {
+        return {
+            pokemon: {}
+        };
+    },
+    componentWillMount: function componentWillMount() {
+        this.setState({ pokemon: this.props.pokemon });
+    },
+    componentDidMount: function componentDidMount() {
+        $.ajax({
+            headers: {
+                Accept: 'application/json; charset=utf-8'
+            },
+            url: '/pokemon/' + this.props.params.id,
+            method: 'GET',
+            contentType: 'application/json'
+        }).done((function (pokemon) {
+            this.setState({ pokemon: pokemon });
+        }).bind(this));
+    },
     render: function render() {
-        this._click();
-        var sprite = 'http://pokeapi.co/media/img/' + this.props.pokemon.national_id + '.png';
+
+        var sprite = 'http://pokeapi.co/media/img/' + this.state.pokemon.national_id + '.png';
         return React.createElement(
             'table',
             null,
@@ -32083,7 +32103,7 @@ var Pokemon = React.createClass({
                 React.createElement(
                     'td',
                     null,
-                    this.props.pokemon.name
+                    this.state.pokemon.name
                 )
             ),
             React.createElement(
@@ -32114,17 +32134,8 @@ module.exports = Pokemon;
 'use strict';
 
 var React = require('react');
-// var Router = require('react-router');
 var Router = require('react-router');
-// var Router = ReactRouter.Router;
-// var Route = ReactRouter.Route;
-// var routes = require('../routes.jsx');
-
-// var router = Router.create({
-//   routes: routes,
-//   location: Router.HistoryLocation
-// });
-// var Pokemon = require('../views/pokemon.jsx')
+var Link = Router.Link;
 
 var PokemonSearch = React.createClass({
   displayName: 'PokemonSearch',
@@ -32132,13 +32143,17 @@ var PokemonSearch = React.createClass({
   getInitialState: function getInitialState() {
 
     return {
-      pokemonId: '1'
+      pokemonId: ''
+
     };
   },
+  componentDidMount: function componentDidMount() {},
   render: function render() {
+    var search = 'Buscar a ' + this.state.pokemonId;
+    var search_ = '/pokemon/' + this.state.pokemonId;
     return React.createElement(
-      'form',
-      { action: '', onSubmit: this.onSubmit },
+      'div',
+      null,
       React.createElement('input', {
         type: 'text',
         placeholder: 'Nombre o numero de pokemon',
@@ -32146,9 +32161,9 @@ var PokemonSearch = React.createClass({
         onChange: this.onChange
       }),
       React.createElement(
-        'button',
-        { type: 'submit' },
-        'Buscar'
+        Link,
+        { to: search_ },
+        search
       )
     );
   },
@@ -32159,13 +32174,15 @@ var PokemonSearch = React.createClass({
   },
   onSubmit: function onSubmit(event) {
     event.preventDefault();
-
-    document.location.href = '/pokemon/' + this.state.pokemonId;
+    // Router.run()
+    // document.location.href = '/pokemon/'+this.state.pokemonId;
   }
 
 });
 
 module.exports = PokemonSearch;
+
+// Router.run('/pokemon/pikachu', Router.HashLocation ,document.body)
 
 },{"react":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react/react.js","react-router":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-router/lib/index.js"}],"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/index.js":[function(require,module,exports){
 'use strict';
@@ -32200,7 +32217,7 @@ var routes = React.createElement(
     Router.Route,
     { path: '/', handler: App },
     React.createElement(Router.DefaultRoute, { name: 'index', handler: Index }),
-    React.createElement(Router.Route, { path: '/pokemon/:id', component: pokemon })
+    React.createElement(Router.Route, { name: 'pokemon', path: '/pokemon/:id', handler: pokemon })
 );
 
 module.exports = routes;
@@ -32263,6 +32280,7 @@ var React = require('react');
 var Router = require('react-router');
 var Layout = require('./layout.jsx');
 var PokemonSearch = require('../components/PokemonSearch.jsx');
+var Link = Router.Link;
 
 module.exports = React.createClass({
 
@@ -32272,6 +32290,11 @@ module.exports = React.createClass({
     return React.createElement(
       'div',
       { id: 'index' },
+      React.createElement(
+        Link,
+        { to: '/pokemon/pikachu' },
+        'buscar a pikachu'
+      ),
       React.createElement(
         'h1',
         null,
@@ -32325,20 +32348,28 @@ var Layout = require('./layout.jsx');
 var PokemonSearch = require('../components/PokemonSearch.jsx');
 var Pokemon = require('../components/Pokemon.jsx');
 
+var Router = require('react-router');
+var Link = Router.Link;
+
 module.exports = React.createClass({
 
   displayName: 'pokemon',
   render: function render() {
-
     return React.createElement(
-      Layout,
-      this.props,
+      'div',
+      null,
       React.createElement(
         'h2',
         null,
         'Pokemon encontrado!'
       ),
-      React.createElement(Pokemon, { pokemon: this.props.pokemon }),
+      ' ',
+      React.createElement(
+        Link,
+        { to: '/' },
+        'ir a la home'
+      ),
+      React.createElement(Pokemon, this.props),
       React.createElement('hr', null),
       React.createElement(
         'h2',
@@ -32351,4 +32382,4 @@ module.exports = React.createClass({
 
 });
 
-},{"../components/Pokemon.jsx":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/components/Pokemon.jsx","../components/PokemonSearch.jsx":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/components/PokemonSearch.jsx","./layout.jsx":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/views/layout.jsx","react":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react/react.js"}]},{},["/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/index.js"]);
+},{"../components/Pokemon.jsx":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/components/Pokemon.jsx","../components/PokemonSearch.jsx":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/components/PokemonSearch.jsx","./layout.jsx":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/views/layout.jsx","react":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react/react.js","react-router":"/Users/leonidasesteban/proyectos/repos-random/react-pokemon/node_modules/react-router/lib/index.js"}]},{},["/Users/leonidasesteban/proyectos/repos-random/react-pokemon/public/index.js"]);

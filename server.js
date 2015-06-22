@@ -17,7 +17,7 @@ var engine = renderer.server.create({
 
 // set the engine
 app.engine('.jsx', engine);
-app.engine('.js', engine);
+// app.engine('.js', engine);
 
 // set the view directory
 app.set('views', __dirname + '/public/views');
@@ -50,11 +50,14 @@ function pokemon(req, res){
             });
     
         } else {
-            res.render('pokemon', {
-                title : "Pokemon encontrado :)",
-                pokemon : data,
-                url: req.url
-            });
+            if(req.xhr){
+                res.json(data)
+            }else{
+                res.render(req.url, {
+                    title : "Pokemon encontrado :)",
+                    pokemon : data,
+                });
+            }
         }
     });
 }
@@ -62,7 +65,7 @@ function pokemon(req, res){
 app.get('/', index);
 
 
-app.use('/pokemon/:id', pokemon);
+app.get('/pokemon/:id', pokemon);
 
 
 app.listen(app.get('port'), function(){

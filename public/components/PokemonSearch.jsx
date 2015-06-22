@@ -1,35 +1,31 @@
 var React = require('react');
-// var Router = require('react-router');
 var Router = require('react-router');
-// var Router = ReactRouter.Router;
-// var Route = ReactRouter.Route;
-// var routes = require('../routes.jsx');
-
-
-// var router = Router.create({
-//   routes: routes,
-//   location: Router.HistoryLocation
-// });
-// var Pokemon = require('../views/pokemon.jsx')
+var Link = Router.Link;
 
 var PokemonSearch = React.createClass({
     getInitialState : function(){
 
       return {
-        pokemonId : "1",
+        pokemonId : "",
+
       }
     },
+    componentDidMount : function(){
+      // Router.run('/pokemon/pikachu', Router.HashLocation ,document.body)
+    },
     render : function(){
+        var search = "Buscar a " + this.state.pokemonId;
+        var search_ = "/pokemon/" + this.state.pokemonId;
         return(
-            <form action="" onSubmit={this.onSubmit}>
+          <div>
             <input 
               type="text" 
               placeholder="Nombre o numero de pokemon"
               value={this.state.pokemonId}
               onChange={this.onChange}
               />
-            <button type="submit">Buscar</button>
-          </form>
+              <Link to={search_} >{search}</Link>
+          </div>
         )
     },
     onChange : function(event){
@@ -39,10 +35,12 @@ var PokemonSearch = React.createClass({
     },
     onSubmit: function(event) {
       event.preventDefault();
-      
-      document.location.href = '/pokemon/'+this.state.pokemonId;
+      // Router.run()
+      // document.location.href = '/pokemon/'+this.state.pokemonId;
     },
 
 })
 
 module.exports = PokemonSearch;
+
+

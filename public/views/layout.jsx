@@ -15,9 +15,12 @@ module.exports = React.createClass({
           </title>
         </head>
         <body>
-          {this.props.children}
+          <div id="container">
+            {this.props.children}
+          </div>
         </body>
         <script src='/bundle.js'></script>
+        <script src="https://fb.me/react-0.13.3.min.js"></script>
       </html>
     );
   }

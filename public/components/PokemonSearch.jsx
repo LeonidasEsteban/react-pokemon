@@ -1,8 +1,15 @@
 var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
+var $ = require('jquery');
+
+var PokemonActions = require('../actions/PokemonActions.jsx');
+
+var Navigation =Router.Navigation;
+
 
 var PokemonSearch = React.createClass({
+    mixins : [Navigation],
     getInitialState : function(){
 
       return {
@@ -10,33 +17,43 @@ var PokemonSearch = React.createClass({
 
       }
     },
-    componentDidMount : function(){
-      // Router.run('/pokemon/pikachu', Router.HashLocation ,document.body)
-    },
+
     render : function(){
         var search = "Buscar a " + this.state.pokemonId;
         var search_ = "/pokemon/" + this.state.pokemonId;
         return(
-          <div>
+          <form onSubmit={this.searchPokemon}>
             <input 
               type="text" 
               placeholder="Nombre o numero de pokemon"
               value={this.state.pokemonId}
               onChange={this.onChange}
               />
-              <Link to={search_} >{search}</Link>
-          </div>
+              <button type="submit">Buscar</button>
+          </form>
         )
     },
-    onChange : function(event){
+    onChange : function(e){
       this.setState({
         pokemonId : event.target.value,
       })
     },
-    onSubmit: function(event) {
-      event.preventDefault();
-      // Router.run()
-      // document.location.href = '/pokemon/'+this.state.pokemonId;
+    searchPokemon: function(e) {
+      e.preventDefault();
+      $.ajax({
+          headers: { 
+              Accept : "application/json; charset=utf-8"
+          },
+          url :'/pokemon/'+this.state.pokemonId,
+          method : "GET",
+          contentType : "application/json"
+          })
+      .done(function(pokemon){
+
+          PokemonActions.changePokemon(pokemon)
+          this.transitionTo('pokemon', {id: this.state.pokemonId});
+
+      }.bind(this))
     },
 
 })

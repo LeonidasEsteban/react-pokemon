@@ -10,7 +10,7 @@ var Pokemon = React.createClass({
 
     render : function(){
 
-        var sprite = "//pokeapi.co/media/img/"+this.props.pokemon.national_id+".png"
+        var sprite = "http://pokeapi.co/media/img/"+this.props.pokemon.national_id+".png"
         return (
             <table >
                 <tr>

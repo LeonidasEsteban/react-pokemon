@@ -15,28 +15,32 @@ var PokemonSearch = React.createClass({
       return {
         pokemonId : "",
 
-      }
+      };
     },
 
     render : function(){
         var search = "Buscar a " + this.state.pokemonId;
         var search_ = "/pokemon/" + this.state.pokemonId;
         return(
-          <form onSubmit={this.searchPokemon}>
+          <form onSubmit={this.searchPokemon} className="PokemonSearch">
             <input 
               type="text" 
               placeholder="Nombre o numero de pokemon"
               value={this.state.pokemonId}
               onChange={this.onChange}
+              className="PokemonSearch-input"
               />
-              <button type="submit">Buscar</button>
+              <button 
+              type="submit"
+              className="PokemonSearch-submit"
+              >Buscar</button>
           </form>
-        )
+        );
     },
     onChange : function(e){
       this.setState({
         pokemonId : event.target.value,
-      })
+      });
     },
     searchPokemon: function(e) {
       e.preventDefault();
@@ -50,13 +54,13 @@ var PokemonSearch = React.createClass({
           })
       .done(function(pokemon){
 
-          PokemonActions.changePokemon(pokemon)
+          PokemonActions.changePokemon(pokemon);
           this.transitionTo('pokemon', {id: this.state.pokemonId});
 
-      }.bind(this))
+      }.bind(this));
     },
 
-})
+});
 
 module.exports = PokemonSearch;
 

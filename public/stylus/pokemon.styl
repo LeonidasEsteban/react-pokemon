@@ -3,3 +3,39 @@ body
     font-family "Open Sans", Arial
     background-image url('../images/background.jpg')
     background-size cover
+    margin 0
+    display flex
+    flex-direction column
+    justify-content center
+    min-height 100vh
+.Index
+    // border 1px solid red
+    background white
+    max-width 500px
+    margin 0 auto
+    padding 1em
+    &-title
+        margin 0
+
+.PokemonSearch
+    padding 1em
+    display flex
+    // border 1px solid red
+    &-input
+        flex 1
+        margin-right 1em
+        font-size .8em
+        border 1px solid gray
+        padding 0 1em
+        outline 0
+        &:focus
+            border 1px solid black
+            background #FCF37E
+    &-submit
+        background #FE0000
+        color white
+        border none
+        border-bottom 5px solid black
+        padding .5em
+        font-size 1em
+        border-radius .5em

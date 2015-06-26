@@ -33500,16 +33500,20 @@ var PokemonSearch = React.createClass({
     var search_ = '/pokemon/' + this.state.pokemonId;
     return React.createElement(
       'form',
-      { onSubmit: this.searchPokemon },
+      { onSubmit: this.searchPokemon, className: 'PokemonSearch' },
       React.createElement('input', {
         type: 'text',
         placeholder: 'Nombre o numero de pokemon',
         value: this.state.pokemonId,
-        onChange: this.onChange
+        onChange: this.onChange,
+        className: 'PokemonSearch-input'
       }),
       React.createElement(
         'button',
-        { type: 'submit' },
+        {
+          type: 'submit',
+          className: 'PokemonSearch-submit'
+        },
         'Buscar'
       )
     );
@@ -33653,24 +33657,26 @@ module.exports = React.createClass({
 
 var React = require('react');
 var PokemonSearch = require('../components/PokemonSearch.jsx');
-module.exports = React.createClass({
 
+module.exports = React.createClass({
   displayName: 'index',
   render: function render() {
     return React.createElement(
       'div',
-      { id: 'index' },
-      this.props.title,
+      { className: 'Index' },
       React.createElement(
         'h1',
-        null,
-        'Busca un pokemon, puedes usar numeros del 1 al 718 o su nombre ^ ^'
+        { className: 'Index-title' },
+        'Busca un Pokemon '
+      ),
+      React.createElement(
+        'h3',
+        { className: 'Index-subtitle' },
+        'puedes usar numeros del 1 al 718 o su nombre'
       ),
       React.createElement(PokemonSearch, null)
     );
-  },
-  search: function search() {}
-
+  }
 });
 
 },{"../components/PokemonSearch.jsx":221,"react":197}],228:[function(require,module,exports){

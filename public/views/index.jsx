@@ -1,21 +1,15 @@
-'use strict';
-
 var React = require('react');
-var PokemonSearch = require('../components/PokemonSearch.jsx')
-module.exports = React.createClass({
+var PokemonSearch = require('../components/PokemonSearch.jsx');
 
+module.exports = React.createClass({
   displayName: 'index',
   render: function render() {
     return (
-        <div id="index">
-          {this.props.title}
-          <h1>Busca un pokemon, puedes usar numeros del 1 al 718 o su nombre ^ ^</h1>
+        <div className="Index">
+          <h1 className="Index-title">Busca un Pokemon </h1>
+          <h3 className="Index-subtitle">puedes usar numeros del 1 al 718 o su nombre</h3>
           <PokemonSearch />
         </div>
     );
   },
-  search : function(){
-
-  }
-  
 });

@@ -33428,40 +33428,28 @@ var Pokemon = React.createClass({
     },
 
     render: function render() {
-
-        var sprite = "http://pokeapi.co/media/img/" + this.props.pokemon.national_id + ".png";
+        var classes = "Pokemon is-";
+        classes += this.props.pokemon.types[0].name;
+        var sprite = "http://play.pokemonshowdown.com/sprites/xyani/" + this.props.pokemon.name.toLocaleLowerCase() + ".gif";
+        var sound = "http://veekun.com/dex/media/pokemon/cries/" + this.props.pokemon.national_id + ".ogg";
         return React.createElement(
-            "table",
-            null,
+            "div",
+            { className: classes },
+            React.createElement("audio", { src: sound, autoPlay: true }),
             React.createElement(
-                "tr",
-                null,
-                React.createElement(
-                    "td",
-                    null,
-                    "Nombre"
-                ),
-                React.createElement(
-                    "td",
-                    null,
-                    this.props.pokemon.name
-                )
+                "h1",
+                { className: "Pokemon-name" },
+                this.props.pokemon.name
             ),
-            React.createElement(
-                "tr",
-                null,
-                React.createElement(
-                    "td",
-                    null,
-                    "Imagen"
-                ),
-                React.createElement(
-                    "td",
-                    null,
-                    React.createElement("img", { src: sprite, alt: "", onClick: this._click }),
-                    " "
-                )
-            )
+            React.createElement("img", { src: sprite, alt: this.props.pokemon.name, onClick: this._click }),
+            this.props.pokemon.types.map(function (type) {
+                var classes = "type left " + type.name;
+                return React.createElement(
+                    "span",
+                    { className: classes, key: type.name },
+                    type.name
+                );
+            })
         );
     },
     _click: function _click() {
@@ -33503,7 +33491,7 @@ var PokemonSearch = React.createClass({
       { onSubmit: this.searchPokemon, className: 'PokemonSearch' },
       React.createElement('input', {
         type: 'text',
-        placeholder: 'Nombre o numero de pokemon',
+        placeholder: 'Name or ID of the Pokemon',
         value: this.state.pokemonId,
         onChange: this.onChange,
         className: 'PokemonSearch-input'
@@ -33514,7 +33502,7 @@ var PokemonSearch = React.createClass({
           type: 'submit',
           className: 'PokemonSearch-submit'
         },
-        'Buscar'
+        'Search...'
       )
     );
   },
@@ -33667,12 +33655,12 @@ module.exports = React.createClass({
       React.createElement(
         'h1',
         { className: 'Index-title' },
-        'Busca un Pokemon '
+        'Find a Pokemon!'
       ),
       React.createElement(
         'h3',
         { className: 'Index-subtitle' },
-        'puedes usar numeros del 1 al 718 o su nombre'
+        'Search by name or ID (1 - 718)'
       ),
       React.createElement(PokemonSearch, null)
     );
@@ -33697,7 +33685,7 @@ module.exports = React.createClass({
         null,
         React.createElement('meta', { charSet: 'utf-8' }),
         React.createElement('link', { href: 'http://fonts.googleapis.com/css?family=Open+Sans', rel: 'stylesheet', type: 'text/css' }),
-        React.createElement('link', { rel: 'stylesheet', href: './css/pokemon.css' }),
+        React.createElement('link', { rel: 'stylesheet', href: '/css/pokemon.css' }),
         React.createElement(
           'title',
           null,
@@ -33755,24 +33743,24 @@ module.exports = React.createClass({
   render: function render() {
     return React.createElement(
       'div',
-      null,
-      React.createElement(
-        'h2',
-        null,
-        'Pokemon encontrado!'
-      ),
-      ' ',
+      { className: 'Pokedex' },
       React.createElement(
         'a',
-        { onClick: this.goHome },
-        'ir a la home'
+        {
+          className: 'Pokedex-goBack',
+          onClick: this.goHome },
+        'Go to Home'
+      ),
+      React.createElement(
+        'h2',
+        { className: 'Pokedex-title' },
+        'Pokemon found!'
       ),
       React.createElement(Pokemon, { pokemon: this.state.pokemon }),
-      React.createElement('hr', null),
       React.createElement(
         'h2',
         null,
-        'Busca otro pokemon'
+        'Find more pokemons!'
       ),
       React.createElement(PokemonSearch, null)
     );

@@ -25,7 +25,7 @@ var PokemonSearch = React.createClass({
           <form onSubmit={this.searchPokemon} className="PokemonSearch">
             <input 
               type="text" 
-              placeholder="Nombre o numero de pokemon"
+              placeholder="Name or ID of the Pokemon"
               value={this.state.pokemonId}
               onChange={this.onChange}
               className="PokemonSearch-input"
@@ -33,7 +33,7 @@ var PokemonSearch = React.createClass({
               <button 
               type="submit"
               className="PokemonSearch-submit"
-              >Buscar</button>
+              >Search...</button>
           </form>
         );
     },

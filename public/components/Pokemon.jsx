@@ -9,23 +9,24 @@ var Pokemon = React.createClass({
     },
 
     render : function(){
-
-        var sprite = "http://pokeapi.co/media/img/"+this.props.pokemon.national_id+".png"
+        var classes = "Pokemon is-";
+        classes+=this.props.pokemon.types[0].name
+        var sprite = "http://play.pokemonshowdown.com/sprites/xyani/"+this.props.pokemon.name.toLocaleLowerCase()+".gif";
+        var sound = "http://veekun.com/dex/media/pokemon/cries/"+this.props.pokemon.national_id+".ogg";
         return (
-            <table >
-                <tr>
-                    <td>
-                        Nombre
-                    </td>
-                    <td>
-                        {this.props.pokemon.name}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Imagen</td>
-                    <td><img src={sprite} alt="" onClick={this._click}/> </td>
-                </tr>
-            </table>
+            <div className={classes}>
+                <audio src={sound} autoPlay></audio>
+                <h1 className="Pokemon-name">
+                    {this.props.pokemon.name}
+                </h1>
+                <img src={sprite} alt={this.props.pokemon.name}  onClick={this._click}/> 
+                {this.props.pokemon.types.map(function(type){
+                    var classes = "type left "+type.name;
+                    return <span className={classes} key={type.name}>{type.name}</span>
+                })}
+
+        
+            </div>
         )
     },
     _click : function(){

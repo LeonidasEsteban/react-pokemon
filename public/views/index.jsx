@@ -6,8 +6,8 @@ module.exports = React.createClass({
   render: function render() {
     return (
         <div className="Index">
-          <h1 className="Index-title">Busca un Pokemon </h1>
-          <h3 className="Index-subtitle">puedes usar numeros del 1 al 718 o su nombre</h3>
+          <h1 className="Index-title">Find a Pokemon!</h1>
+          <h3 className="Index-subtitle">Search by name or ID (1 - 718)</h3>
           <PokemonSearch />
         </div>
     );

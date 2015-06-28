@@ -5,17 +5,26 @@ var $ = require('jquery');
 
 var PokemonActions = require('../actions/PokemonActions.jsx');
 
-var Navigation =Router.Navigation;
+var Navigation = Router.Navigation;
+var State = Router.State;
 
+
+var Reflux = require('reflux');
+var PokemonStore = require('../stores/PokemonStores.jsx');
 
 var PokemonSearch = React.createClass({
-    mixins : [Navigation],
+    mixins : [Navigation,
+              State,
+              Reflux.ListenerMixin
+            ],
     getInitialState : function(){
-
       return {
         pokemonId : "",
-
+        search : this.getParams().id || "",
       };
+    },
+    componentDidMount : function(){
+      this.listenTo(PokemonStore, this.navigate);
     },
 
     render : function(){
@@ -44,21 +53,29 @@ var PokemonSearch = React.createClass({
     },
     searchPokemon: function(e) {
       e.preventDefault();
-      $.ajax({
-          headers: { 
-              Accept : "application/json; charset=utf-8"
-          },
-          url :'/pokemon/'+this.state.pokemonId,
-          method : "GET",
-          contentType : "application/json"
-          })
-      .done(function(pokemon){
-
-          PokemonActions.changePokemon(pokemon);
-          this.transitionTo('pokemon', {id: this.state.pokemonId});
-
-      }.bind(this));
+      if(this.state.search !== this.state.pokemonId){
+        this.setState({
+          search : this.state.pokemonId,
+        })
+        $.ajax({
+            headers: { 
+                Accept : "application/json; charset=utf-8"
+            },
+            url :'/pokemon/'+this.state.pokemonId,
+            method : "GET",
+            contentType : "application/json"
+            })
+        .done(function(pokemon){
+            PokemonActions.changePokemon(pokemon);
+        }.bind(this));
+      }else{
+        console.warn('Intenta buscar otro pokemon :)');
+      }
     },
+    navigate : function(){
+        this.transitionTo('pokemon', {id: this.state.pokemonId});
+    }
+      
 
 });
 

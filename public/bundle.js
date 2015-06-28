@@ -33414,38 +33414,40 @@ var Actions = Reflux.createActions(["changePokemon"]);
 module.exports = Actions;
 
 },{"reflux":198}],220:[function(require,module,exports){
-"use strict";
+'use strict';
 
-var React = require("react");
+var React = require('react');
 
 var Pokemon = React.createClass({
-    displayName: "Pokemon",
+    displayName: 'Pokemon',
 
-    getDefaultProps: function getDefaultProps() {
-        return {
-            pokemon: {}
-        };
+    getInitialState: function getInitialState(props) {
+        props = props || this.props;
+        return props;
     },
-
+    componentWillReceiveProps: function componentWillReceiveProps(newProps, oldProps) {
+        this.setState(this.getInitialState(newProps));
+    },
     render: function render() {
-        var classes = "Pokemon is-";
-        classes += this.props.pokemon.types[0].name;
-        var sprite = "http://play.pokemonshowdown.com/sprites/xyani/" + this.props.pokemon.name.toLocaleLowerCase() + ".gif";
-        var sound = "http://veekun.com/dex/media/pokemon/cries/" + this.props.pokemon.national_id + ".ogg";
+        console.info('Pokemon render: ', this.state.name);
+        var classes = 'Pokemon is-';
+        classes += this.state.types[0].name;
+        var sprite = 'http://play.pokemonshowdown.com/sprites/xyani/' + this.state.name.toLocaleLowerCase() + '.gif';
+        var sound = 'http://veekun.com/dex/media/pokemon/cries/' + this.state.national_id + '.ogg';
         return React.createElement(
-            "div",
+            'div',
             { className: classes },
-            React.createElement("audio", { src: sound, autoPlay: true }),
+            React.createElement('audio', { src: sound, autoPlay: true }),
             React.createElement(
-                "h1",
-                { className: "Pokemon-name" },
-                this.props.pokemon.name
+                'h1',
+                { className: 'Pokemon-name' },
+                this.state.name
             ),
-            React.createElement("img", { src: sprite, alt: this.props.pokemon.name, onClick: this._click }),
-            this.props.pokemon.types.map(function (type) {
-                var classes = "type left " + type.name;
+            React.createElement('img', { src: sprite, alt: this.state.name, onClick: this._click }),
+            this.state.types.map(function (type) {
+                var classes = 'type left ' + type.name;
                 return React.createElement(
-                    "span",
+                    'span',
                     { className: classes, key: type.name },
                     type.name
                 );
@@ -33453,7 +33455,7 @@ var Pokemon = React.createClass({
         );
     },
     _click: function _click() {
-        console.log("auch!");
+        console.log('auch!');
     }
 });
 
@@ -33470,17 +33472,23 @@ var $ = require('jquery');
 var PokemonActions = require('../actions/PokemonActions.jsx');
 
 var Navigation = Router.Navigation;
+var State = Router.State;
+
+var Reflux = require('reflux');
+var PokemonStore = require('../stores/PokemonStores.jsx');
 
 var PokemonSearch = React.createClass({
   displayName: 'PokemonSearch',
 
-  mixins: [Navigation],
+  mixins: [Navigation, State, Reflux.ListenerMixin],
   getInitialState: function getInitialState() {
-
     return {
-      pokemonId: ''
-
+      pokemonId: '',
+      search: this.getParams().id || ''
     };
+  },
+  componentDidMount: function componentDidMount() {
+    this.listenTo(PokemonStore, this.navigate);
   },
 
   render: function render() {
@@ -33513,25 +33521,33 @@ var PokemonSearch = React.createClass({
   },
   searchPokemon: function searchPokemon(e) {
     e.preventDefault();
-    $.ajax({
-      headers: {
-        Accept: 'application/json; charset=utf-8'
-      },
-      url: '/pokemon/' + this.state.pokemonId,
-      method: 'GET',
-      contentType: 'application/json'
-    }).done((function (pokemon) {
-
-      PokemonActions.changePokemon(pokemon);
-      this.transitionTo('pokemon', { id: this.state.pokemonId });
-    }).bind(this));
+    if (this.state.search !== this.state.pokemonId) {
+      this.setState({
+        search: this.state.pokemonId
+      });
+      $.ajax({
+        headers: {
+          Accept: 'application/json; charset=utf-8'
+        },
+        url: '/pokemon/' + this.state.pokemonId,
+        method: 'GET',
+        contentType: 'application/json'
+      }).done((function (pokemon) {
+        PokemonActions.changePokemon(pokemon);
+      }).bind(this));
+    } else {
+      console.warn('Intenta buscar otro pokemon :)');
+    }
+  },
+  navigate: function navigate() {
+    this.transitionTo('pokemon', { id: this.state.pokemonId });
   }
 
 });
 
 module.exports = PokemonSearch;
 
-},{"../actions/PokemonActions.jsx":219,"jquery":1,"react":197,"react-router":28}],222:[function(require,module,exports){
+},{"../actions/PokemonActions.jsx":219,"../stores/PokemonStores.jsx":224,"jquery":1,"react":197,"react-router":28,"reflux":198}],222:[function(require,module,exports){
 'use strict';
 
 var Routes = require('./routes.jsx');
@@ -33575,14 +33591,19 @@ module.exports = routes;
 var Reflux = require('reflux');
 var PokemonActions = require('../actions/PokemonActions.jsx');
 
+var pokemon = {};
+
 var PokemonStores = Reflux.createStore({
     init: function init() {
-        PokemonActions.changePokemon.listen(this.output);
+        this.listenToMany(PokemonActions);
     },
-
-    output: function output(pokemon) {
-        console.log('nuevo pokemon encontrado: ', pokemon);
-        this.trigger(pokemon);
+    onChangePokemon: function onChangePokemon(pkm) {
+        pokemon = pkm;
+        console.log('Nuevo pokemon almacenado: ', pkm.name);
+        this.trigger(pkm);
+    },
+    getPokemon: function getPokemon() {
+        return pokemon;
     }
 
 });
@@ -33723,24 +33744,29 @@ var Reflux = require('reflux');
 var PokemonStore = require('../stores/PokemonStores.jsx');
 
 var $ = require('jquery');
-
 module.exports = React.createClass({
-
   displayName: 'pokemon',
   mixins: [Navigation],
-  componentDidMount: function componentDidMount() {
-    PokemonStore.listen(this.onUpdate);
-  },
-  onUpdate: function onUpdate(pokemon) {
-    console.log('tenemos nuevo pokemon: ', pokemon.name);
-    this.setState({ pokemon: pokemon });
-  },
-  getInitialState: function getInitialState() {
+  getDefaultProps: function getDefaultProps() {
     return {
-      pokemon: this.props.pokemon
+      server: false
     };
   },
+  getInitialState: function getInitialState(props) {
+    if (Object.keys(PokemonStore.getPokemon()).length === 0) {
+      props = this.props.pokemon;
+    } else {
+      props = PokemonStore.getPokemon();
+    }
+    return {
+      pokemon: props
+    };
+  },
+  componentWillReceiveProps: function componentWillReceiveProps(newProps, oldProps) {
+    this.setState(this.getInitialState(newProps));
+  },
   render: function render() {
+    console.info('Pokedex render: ', this.state.pokemon.name);
     return React.createElement(
       'div',
       { className: 'Pokedex' },
@@ -33756,7 +33782,7 @@ module.exports = React.createClass({
         { className: 'Pokedex-title' },
         'Pokemon found!'
       ),
-      React.createElement(Pokemon, { pokemon: this.state.pokemon }),
+      React.createElement(Pokemon, this.state.pokemon),
       React.createElement(
         'h2',
         null,
@@ -33765,7 +33791,6 @@ module.exports = React.createClass({
       React.createElement(PokemonSearch, null)
     );
   },
-
   goHome: function goHome() {
     this.transitionTo('/');
   }

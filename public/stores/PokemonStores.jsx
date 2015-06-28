@@ -1,15 +1,19 @@
 var Reflux = require('reflux');
 var PokemonActions = require('../actions/PokemonActions.jsx')
 
+var pokemon = {}
 
 var PokemonStores = Reflux.createStore({
     init: function() {
-        PokemonActions.changePokemon.listen(this.output);
+        this.listenToMany(PokemonActions);
     },
-
-    output: function(pokemon) {
-        console.log('nuevo pokemon encontrado: ',pokemon)
-        this.trigger(pokemon);
+    onChangePokemon: function(pkm) {
+        pokemon = pkm;
+        console.log('Nuevo pokemon almacenado: ',pkm.name)
+        this.trigger(pkm);
+    },
+    getPokemon : function(){
+        return pokemon;
     }
 
 });

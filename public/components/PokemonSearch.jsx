@@ -48,7 +48,7 @@ var PokemonSearch = React.createClass({
     },
     onChange : function(e){
       this.setState({
-        pokemonId : event.target.value,
+        pokemonId : e.target.value,
       });
     },
     searchPokemon: function(e) {

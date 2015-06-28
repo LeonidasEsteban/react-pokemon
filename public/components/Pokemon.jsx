@@ -1,3 +1,5 @@
+"use strict"
+
 var React = require('react');
 
 var Pokemon = React.createClass({
@@ -11,7 +13,7 @@ var Pokemon = React.createClass({
     },
     render : function(){
         console.info('Pokemon render: ', this.state.name);
-        var classes = "Pokemon is-";
+        let classes = "Pokemon is-";
         classes+=this.state.types[0].name
         var sprite = "http://play.pokemonshowdown.com/sprites/xyani/"+this.state.name.toLocaleLowerCase()+".gif";
         var sound = "http://veekun.com/dex/media/pokemon/cries/"+this.state.national_id+".ogg";

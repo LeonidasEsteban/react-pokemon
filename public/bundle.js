@@ -33722,8 +33722,7 @@ module.exports = React.createClass({
           this.props.children
         )
       ),
-      React.createElement('script', { src: '/bundle.js' }),
-      React.createElement('script', { src: 'https://fb.me/react-0.13.3.min.js' })
+      React.createElement('script', { src: '/js/index.js' })
     );
   }
 });

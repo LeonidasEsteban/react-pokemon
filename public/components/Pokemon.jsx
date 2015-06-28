@@ -19,7 +19,7 @@ var Pokemon = React.createClass({
             <div className={classes}>
                 <audio src={sound} autoPlay></audio>
                 <h1 className="Pokemon-name">
-                    {this.state.name}
+                    {this.state.name} 
                 </h1>
                 <img src={sprite} alt={this.state.name}  onClick={this._click}/> 
                 {this.state.types.map(function(type){

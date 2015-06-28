@@ -4,6 +4,13 @@ var livereload = require('gulp-livereload');
 var nib        = require('nib');
 var rupture    = require('rupture');
 var watchify = require('watchify');
+var babelify = require('babelify');
+var globify = require('require-globify');
+var reactify = require('reactify');
+var browserify = require('browserify');
+var source         = require('vinyl-source-stream');
+var streamify      = require('gulp-streamify');
+var uglify      = require('gulp-uglify');
 
 var app = {
     'name': 'pokemon',
@@ -13,7 +20,9 @@ var app = {
         dest  : './public/css/'
     },
     'js' : {
-
+        name : 'index.js',
+        master : './public/index.js',
+        dest : './public/js/'
     }
 };
 
@@ -46,7 +55,39 @@ gulp.task('stylus', function(){
     });
 });
 
-gulp.task('default',['watch']);
+gulp.task('watchify', function(){
+    var watcher  = watchify(browserify({
+        entries     : [app.js.master],
+        transform   : [babelify, globify],
+        debug       : true,
+        cache       : {}, 
+        packageCache: {}, 
+        fullPaths   : true
+    }));
+
+    function bundler(){
+        watcher
+            .bundle()
+            .pipe(source(app.js.name))
+            .pipe(streamify(uglify({
+                mangle: false,
+                compress : {
+                    global_defs : {
+                        DEBUG : true,
+                    },
+                    drop_debugger : false,
+                }
+            })))
+            .pipe(gulp.dest(app.js.dest))
+            .pipe(livereload({auto:true}));
+            console.log(app.js.name, 'compilado');
+
+    }
+    bundler();
+    return watcher.on('update', bundler);
+})
+
+gulp.task('default',['watch', 'watchify']);
 
 gulp.task('watch',function(){
     livereload.listen();

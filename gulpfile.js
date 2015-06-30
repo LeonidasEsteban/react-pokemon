@@ -12,7 +12,6 @@ var source         = require('vinyl-source-stream');
 var streamify      = require('gulp-streamify');
 var uglify      = require('gulp-uglify');
 
-var lrload = require('livereactload');
 
 var app = {
     'name': 'pokemon',

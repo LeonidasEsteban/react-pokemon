@@ -28,6 +28,8 @@ var Pokemon = React.createClass({
         var pokeapiSprite = "http://pokeapi.co/media/img/"+this.state.national_id+".png";
         var sound = "http://veekun.com/dex/media/pokemon/cries/"+this.state.national_id+".ogg";
         var colors = {}
+        var nameStyle = {}
+
         if(this.state.palette){
             colors = this.state.palette.map(function(colors){
                 
@@ -36,11 +38,16 @@ var Pokemon = React.createClass({
                 }
                 return <span style={style} className="color"></span>
             })
+
+            nameStyle = {
+                color : 'rgba('+this.state.palette[8]+',.5)'
+            }
         }
         var poke = [] 
         for(var i = 0; i < 10; i++){
             poke.push(<img src={showdownSprite} alt={this.state.name}/>)
         }
+
         return (
             <div className="Pokemon">
                 <div>
@@ -49,7 +56,7 @@ var Pokemon = React.createClass({
                 <div className="Pokemon-content">
                     <audio src={sound} autoPlay ></audio>
                     <h1 className="Pokemon-name">
-                        {this.state.name}
+                        <span style={nameStyle}>{this.state.name}</span>
                         <span>
                             {poke}
                         </span>

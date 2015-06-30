@@ -1,0 +1,1 @@
+console.error("Error: Cannot find module 'eventemitter3' from '/Users/Leonidas/proyectos/random/react-pokemon/node_modules/reflux/src'");

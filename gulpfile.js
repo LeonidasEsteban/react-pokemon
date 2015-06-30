@@ -12,6 +12,8 @@ var source         = require('vinyl-source-stream');
 var streamify      = require('gulp-streamify');
 var uglify      = require('gulp-uglify');
 
+var lrload = require('livereactload');
+
 var app = {
     'name': 'pokemon',
     'stylus' : {
@@ -56,6 +58,7 @@ gulp.task('stylus', function(){
 });
 
 gulp.task('watchify', function(){
+    // lrload.monitor(app.js.dest+app.js.name, {displayNotification: true})
     var watcher  = watchify(browserify({
         entries     : [app.js.master],
         transform   : [babelify, globify],
@@ -64,22 +67,21 @@ gulp.task('watchify', function(){
         packageCache: {}, 
         fullPaths   : true
     }));
-
     function bundler(){
         watcher
             .bundle()
             .pipe(source(app.js.name))
-            .pipe(streamify(uglify({
-                mangle: false,
-                compress : {
-                    global_defs : {
-                        DEBUG : true,
-                    },
-                    drop_debugger : false,
-                }
-            })))
+            // .pipe(streamify(uglify({
+            //     mangle: false,
+            //     compress : {
+            //         global_defs : {
+            //             DEBUG : true,
+            //         },
+            //         drop_debugger : false,
+            //     }
+            // })))
             .pipe(gulp.dest(app.js.dest))
-            .pipe(livereload({auto:true}));
+            // .pipe(livereload({auto:true}));
             console.log(app.js.name, 'compilado');
 
     }
@@ -93,3 +95,17 @@ gulp.task('watch',function(){
     livereload.listen();
     gulp.watch(app.stylus.src,['stylus']);
 });
+
+var nodemon    = require('gulp-nodemon')
+
+gulp.task('serverwatch', function() {
+  nodemon({ script: 'server.js', ext: 'js', ignore: ['gulpfile.js', 'public/index.js', 'node_modules/*'] })
+    .on('change', [])
+    .on('restart', function () {
+      console.log('Server restarted')
+      livereload.reload()
+    })
+
+})
+
+gulp.task('build', [ 'serverwatch', 'watch', 'watchify'])

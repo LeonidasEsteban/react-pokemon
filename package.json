@@ -19,15 +19,16 @@
     "envify": "~3.2.0",
     "gulp": "^3.9.0",
     "gulp-livereload": "^3.8.0",
+    "gulp-nodemon": "^2.0.3",
+    "gulp-streamify": "0.0.5",
     "gulp-stylus": "^2.0.5",
     "nib": "^1.1.0",
     "reactify": "~0.17.1",
     "require-globify": "^1.2.1",
     "rupture": "^0.6.1",
     "uglifyjs": "*",
-    "watchify": "^3.2.3",
     "vinyl-source-stream": "^1.1.0",
-    "gulp-streamify": "0.0.5"
+    "watchify": "^3.2.3"
   },
   "engines": {
     "iojs": "2.3.1"

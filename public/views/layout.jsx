@@ -10,7 +10,7 @@ module.exports = React.createClass({
       <html>
         <head>
           <meta charSet='utf-8' />
-          <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+          <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
           <link rel="stylesheet" href="/css/pokemon.css"/>
           <title>
             {this.props.title}

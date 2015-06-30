@@ -42,10 +42,11 @@ module.exports = React.createClass({
             className="Pokedex-goBack"
             onClick={this.goHome}>
           Go to Home</a>
-          <h2 className="Pokedex-title">Pokemon found!</h2> 
           <Pokemon {...this.state.pokemon}/>
-          <h2>Find more pokemons!</h2>
-          <PokemonSearch />
+          <div className="Pokedex-search">
+            <h2 className="Pokedex-searchTitle">Find more pokemons!</h2>
+            <PokemonSearch />
+          </div>
       </div>
     );
   },

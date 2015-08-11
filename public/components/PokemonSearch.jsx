@@ -17,7 +17,7 @@ var PokemonStore = require('../stores/PokemonStores.jsx');
 
 
 var Loading = React.createClass({
- 
+
   render : function(){
     return (
       <div className="spinner">
@@ -31,82 +31,92 @@ var Loading = React.createClass({
 
 
 var PokemonSearch = React.createClass({
-    mixins : [Navigation,
-              State,
-              Reflux.ListenerMixin
-            ],
+  mixins : [Navigation,
+            State,
+            Reflux.ListenerMixin
+          ],
 
-    getInitialState : function(){
-      return {
-        pokemonId : "",
-        search : this.getParams().id || "",
-        loading : false,
-      };
-    },
+  getInitialState : function(){
+    return {
+      pokemonId : "",
+      search : this.getParams().id || "",
+      loading : false,
+    };
+  },
 
-    componentDidMount : function(){
+  componentDidMount : function(){
       this.listenTo(PokemonStore, this.navigate);
-    },
+  },
 
-    render : function(){
-      var template;
-        if(!this.state.loading){
-          template = 
-          <form onSubmit={this.searchPokemon} className="PokemonSearch">
-            <input 
-              type="text" 
-              placeholder="Name or ID of the Pokemon"
-              value={this.state.pokemonId}
-              onChange={this.onChange}
-              className="PokemonSearch-input"
-              autoFocus
-              />
-              <button 
-              type="submit"
-              className="PokemonSearch-submit"
-              >Search...</button>
-          </form>
-        }else{
-          template = <Loading/>
-        }
-        return(
-          <div>
-            {template}
-          </div>
-        );
-    },
-    onChange : function(e){
-      this.setState({
-        pokemonId : e.target.value,
-      });
-    },
-    searchPokemon: function(e) {
-      e.preventDefault();
-
-      if(this.state.search !== this.state.pokemonId){
-        this.setState({
-          search : this.state.pokemonId,
-          loading : true,
-        })
-        $.ajax({
-            headers: { 
-                Accept : "application/json; charset=utf-8"
-            },
-            url :'/pokemon/'+this.state.pokemonId,
-            method : "GET",
-            contentType : "application/json"
-            })
-        .done(function(pokemon){
-          this.setState({loading:false});
-            PokemonActions.changePokemon(pokemon);
-        }.bind(this));
+  render : function(){
+    var template;
+      if(!this.state.loading){
+        template =
+        <form onSubmit={this.searchPokemon} className="PokemonSearch">
+          <input
+            type="text"
+            placeholder="Name or ID of the Pokemon"
+            value={this.state.pokemonId}
+            onChange={this.onChange}
+            className="PokemonSearch-input"
+            autoFocus
+            />
+            <button
+            type="submit"
+            className="PokemonSearch-submit"
+            >Search...</button>
+        </form>
       }else{
-        console.warn('Intenta buscar otro pokemon :)');
+        template = <Loading/>
       }
-    },
-    navigate : function(){
-        this.transitionTo('pokemon', {id: this.state.pokemonId});
-    },
+      return(
+        <div>
+          {template}
+        </div>
+      );
+  },
+  onChange : function(e){
+    this.setState({
+      pokemonId : e.target.value,
+    });
+  },
+  searchPokemon: function(e) {
+    e.preventDefault();
+
+    if(this.state.search !== this.state.pokemonId){
+      this.setState({
+        search : this.state.pokemonId,
+        loading : true,
+      })
+      const xhr = $.ajax({
+        headers: {
+            Accept : "application/json; charset=utf-8"
+        },
+        url :'/pokemon/'+this.state.pokemonId,
+        method : "GET",
+        contentType : "application/json"
+      })
+
+      xhr.done(function(pokemon){
+        this.setState({loading:false});
+          PokemonActions.changePokemon(pokemon);
+      }.bind(this));
+
+      xhr.fail(function(err) {
+        // this.transitionTo('404');
+        this.setState({
+          loading : false,
+        })
+        PokemonActions.changePokemon({});
+        // this.navigate();
+      }.bind(this))
+    }else{
+      console.warn('Intenta buscar otro pokemon :)');
+    }
+  },
+  navigate : function(){
+      this.transitionTo('search', {id: this.state.pokemonId});
+  },
 
 
 });

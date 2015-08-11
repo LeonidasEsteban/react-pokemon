@@ -9,7 +9,7 @@ var PokemonStores = Reflux.createStore({
     },
     onChangePokemon: function(pkm) {
         pokemon = pkm;
-        console.log('Nuevo pokemon almacenado: ',pkm.name)
+        // console.log('Nuevo pokemon almacenado: ',pkm.name)
         this.trigger(pkm);
     },
     getPokemon : function(){

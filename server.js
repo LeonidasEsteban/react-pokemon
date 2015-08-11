@@ -45,10 +45,15 @@ function index(req, res) {
 function pokemon(req, res){
     pokeAPI.pokemon(req.params.id, function(err, data) {
         if(err) {
-            res.render('404', {
-                title : "Pokemon no encontrado :(",
-            });
-    
+            if(req.xhr){
+              res.status(404).send('Pokemon not found :(');
+            } else {
+              res.render(req.url, {
+                  title : "Pokemon no encontrado :(",
+                  pokemon: {}
+              });
+            }
+
         } else {
             if(req.xhr){
                 res.json(data)
@@ -63,6 +68,11 @@ function pokemon(req, res){
 }
 
 app.get('/', index);
+app.get('/404', function(req, res){
+  res.render(req.url, {
+      title: 'Pokemon no encontrado',
+  });
+});
 
 
 app.get('/pokemon/:id', pokemon);

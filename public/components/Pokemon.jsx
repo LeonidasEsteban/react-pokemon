@@ -32,7 +32,7 @@ var Pokemon = React.createClass({
 
         if(this.state.palette){
             colors = this.state.palette.map(function(colors){
-                
+
                 var style = {
                     background : 'rgb('+colors+')',
                 }
@@ -43,9 +43,9 @@ var Pokemon = React.createClass({
                 color : 'rgba('+this.state.palette[8]+',.5)'
             }
         }
-        var poke = [] 
+        var poke = []
         for(var i = 0; i < 10; i++){
-            poke.push(<img src={showdownSprite} alt={this.state.name}/>)
+            poke.push(<img src={showdownSprite} alt={this.state.name} key={i}/>)
         }
 
         return (
@@ -61,7 +61,7 @@ var Pokemon = React.createClass({
                             {poke}
                         </span>
                     </h1>
-                    <img src={pokeapiSprite} className="u-hidden" id="pokemon-img" crossOrigin="anonymous" /> 
+                    <img src={pokeapiSprite} className="u-hidden" id="pokemon-img" crossOrigin="anonymous" />
                     {this.state.types.map(function(type){
                         var classes = "type left "+type.name;
                         return <span className={classes} key={type.name}>{type.name}</span>
@@ -91,7 +91,7 @@ var Pokemon = React.createClass({
                 rgb(${palette[2]}),
                 transparent
             );
-            
+
         `
         })
 

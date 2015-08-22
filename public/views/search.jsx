@@ -11,6 +11,8 @@ var Reflux = require('reflux');
 var PokemonStore = require('../stores/PokemonStores.jsx');
 
 var NotFoundPokemon = require('../components/NotFoundPokemon.jsx')
+var PokemonActions = require('../actions/PokemonActions.jsx');
+
 
 var $ = require('jquery');
 module.exports = React.createClass({
@@ -24,6 +26,9 @@ module.exports = React.createClass({
     }
   },
   getInitialState : function(props){
+    if(this.props.pokemon){
+      PokemonActions.changePokemon(this.props.pokemon);
+    }
     return {
       pokemon : PokemonStore.getPokemon()
     }

@@ -47,7 +47,6 @@ const BASE_API = 'https://pokeapi.co/api/v2/'
 async function pokemon(req, res){
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${req.params.id}/`)
     const pokemon = await response.json()
-    console.log(pokemon)
     if(req.xhr){
         res.json(data)
     }else{

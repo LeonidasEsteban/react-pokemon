@@ -51,7 +51,7 @@ async function pokemon(req, res){
         res.json(data)
     }else{
         res.render(req.url, {
-            title: "Pokemon encontrado :)",
+            title: "Pokemon encontrado :) ",
             pokemon,
         });
     }

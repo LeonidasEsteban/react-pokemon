@@ -1,5 +1,5 @@
 var express = require('express');
-
+require('isomorphic-fetch')
 var app = express();
 app.set('port', (process.env.PORT || 8080));
 
@@ -42,29 +42,42 @@ function index(req, res) {
 
 
 }
-function pokemon(req, res){
-    pokeAPI.pokemon(req.params.id, function(err, data) {
-        if(err) {
-            if(req.xhr){
-              res.status(404).send('Pokemon not found :(');
-            } else {
-              res.render(req.url, {
-                  title : "Pokemon no encontrado :(",
-                  pokemon: {}
-              });
-            }
+const BASE_API = 'https://pokeapi.co/api/v2/'
 
-        } else {
-            if(req.xhr){
-                res.json(data)
-            }else{
-                res.render(req.url, {
-                    title : "Pokemon encontrado :)",
-                    pokemon : data,
-                });
-            }
-        }
-    });
+async function pokemon(req, res){
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${req.params.id}/`)
+    const pokemon = await response.json()
+    console.log(pokemon)
+    if(req.xhr){
+        res.json(data)
+    }else{
+        res.render(req.url, {
+            title: "Pokemon encontrado :)",
+            pokemon,
+        });
+    }
+    // pokeAPI.pokemon(req.params.id, function(err, data) {
+    //     if(err) {
+    //         if(req.xhr){
+    //           res.status(404).send('Pokemon not found :(');
+    //         } else {
+    //           res.render(req.url, {
+    //               title : "Pokemon no encontrado :(",
+    //               pokemon: {}
+    //           });
+    //         }
+
+    //     } else {
+    //         if(req.xhr){
+    //             res.json(data)
+    //         }else{
+    //             res.render(req.url, {
+    //                 title : "Pokemon encontrado :)",
+    //                 pokemon : data,
+    //             });
+    //         }
+    //     }
+    // });
 }
 
 app.get('/', index);

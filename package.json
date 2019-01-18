@@ -12,6 +12,7 @@
     "react": "^0.13.3",
     "react-engine": "^1.6.0",
     "react-router": "^0.13.3",
+    "isomorphic-fetch": "2.2.1",
     "reflux": "^0.2.8"
   },
   "devDependencies": {

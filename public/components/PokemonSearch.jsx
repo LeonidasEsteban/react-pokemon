@@ -88,28 +88,36 @@ var PokemonSearch = React.createClass({
         search : this.state.pokemonId,
         loading : true,
       })
-      const xhr = $.ajax({
-        headers: {
-            Accept : "application/json; charset=utf-8"
-        },
-        url :'/pokemon/'+this.state.pokemonId,
-        method : "GET",
-        contentType : "application/json"
+
+      // const xhr = $.ajax({
+      //   headers: {
+      //       Accept : "application/json; charset=utf-8"
+      //   },
+      //   url :'/pokemon/'+this.state.pokemonId,
+      //   method : "GET",
+      //   contentType : "application/json"
+      // })
+
+      fetch(`https://pokeapi.co/api/v2/pokemon/${this.state.pokemonId}/`)
+      .then((response)=>{
+        return response.json()
+      })
+      .then(pokemon => {
+        PokemonActions.changePokemon(pokemon);
+        this.setState({loading:false});
       })
 
-      xhr.done(function(pokemon){
-        this.setState({loading:false});
-          PokemonActions.changePokemon(pokemon);
-      }.bind(this));
+      // xhr.done(function(pokemon){
+      // }.bind(this));
 
-      xhr.fail(function(err) {
-        // this.transitionTo('404');
-        this.setState({
-          loading : false,
-        })
-        PokemonActions.changePokemon({});
-        // this.navigate();
-      }.bind(this))
+      // xhr.fail(function(err) {
+      //   // this.transitionTo('404');
+      //   this.setState({
+      //     loading : false,
+      //   })
+      //   PokemonActions.changePokemon({});
+      //   // this.navigate();
+      // }.bind(this))
     }else{
       console.warn('Intenta buscar otro pokemon :)');
     }

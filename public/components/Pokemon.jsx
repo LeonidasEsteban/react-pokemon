@@ -25,8 +25,9 @@ var Pokemon = React.createClass({
         console.info('Pokemon render: ', this.state.name);
 
         var showdownSprite = "http://play.pokemonshowdown.com/sprites/xyani/"+this.state.name.toLocaleLowerCase()+".gif";
-        var pokeapiSprite = "http://pokeapi.co/media/img/"+this.state.national_id+".png";
-        var sound = "http://veekun.com/dex/media/pokemon/cries/"+this.state.national_id+".ogg";
+        // var pokeapiSprite = "http://pokeapi.co/media/img/"+this.state.id+".png";
+        var pokeapiSprite = this.state.sprites.front_default;
+        var sound = "http://veekun.com/dex/media/pokemon/cries/"+this.state.id+".ogg";
         var colors = {}
         var nameStyle = {}
 
